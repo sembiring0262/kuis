@@ -1,0 +1,2618 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="artifact-type" content="tool">
+  <meta name="design-style" content="bauhaus">
+  <title>Arena Fisika XI: Usaha &amp; Energi — Game Beregu 7 Regu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+
+      /* Page and surfaces */
+      --background: #f5f0e8;
+      --surface-container-low: #f2ede5;
+      --surface-container: #eee9e0;
+      --surface-container-high: #e8e3da;
+
+      /* Ink */
+      --on-surface: #1a1a1a;
+      --on-surface-variant: #4a4a4a;
+
+      /* Lines */
+      --outline: #1a1a1a;
+      --outline-variant: #d0cbc3;
+
+      /* Accents */
+      --primary: #1a1a1a;
+      --on-primary: #ffffff;
+      --primary-container: #ffcc00;
+      --on-primary-container: #1a1a1a;
+      --secondary: #e63b2e;
+      --tertiary: #0055ff;
+      --on-tertiary: #ffffff;
+      --error: #cc0000;
+      --on-error: #ffffff;
+
+      /* Data series */
+      --data-1: #e63b2e;
+      --data-2: #0055ff;
+      --data-3: #1a1a1a;
+      --data-4: #9a7300;
+      --data-context: #b5afa5;
+
+      /* Fonts */
+      --font-headline: 'Space Grotesk', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-label: 'Space Grotesk', sans-serif;
+
+      /* Shape */
+      --rounded: 0.125rem;
+      --rounded-lg: 0.25rem;
+      --rounded-full: 0.75rem;
+
+      /* Style effects */
+      --border-thick: 3px solid var(--outline);
+      --border-medium: 2px solid var(--outline);
+      --offset-shadow: 5px 5px 0 var(--outline);
+      --offset-shadow-sm: 3px 3px 0 var(--outline);
+      --rule-heavy: 6px solid var(--outline);
+
+      /* Shared semantic tokens */
+      --positive: #156e3f;
+      --on-positive: #ffffff;
+      --positive-tint: #dff4e7;
+      --warning: #9a7300;
+      --error-tint: #fde8e8;
+      --tertiary-tint: #e6eeff;
+      --focus: #0055ff;
+
+      /* Type scale (Projector-ready tool scale) */
+      --display-size: clamp(2.125rem, 1.5rem + 2.4vw, 3.6rem);
+      --headline-size: clamp(1.375rem, 1.15rem + 0.9vw, 1.95rem);
+      --subhead-size: clamp(1.125rem, 1.02rem + 0.4vw, 1.375rem);
+      --body-size: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+      --label-size: 0.8125rem;
+
+      /* Spacing scale (4pt base) */
+      --space-xs: 0.25rem;
+      --space-sm: 0.5rem;
+      --space-md: 1rem;
+      --space-lg: 1.5rem;
+      --space-xl: 2.5rem;
+      --space-2xl: 4rem;
+      --space-3xl: 6rem;
+
+      /* Motion */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+      --dur-micro: 120ms;
+      --dur-short: 220ms;
+      --dur-long: 420ms;
+    }
+
+    /* Base reset */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body {
+      overflow-x: clip;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background);
+      color: var(--on-surface);
+      font-family: var(--font-body);
+      font-size: var(--body-size);
+      line-height: 1.55;
+    }
+    header { position: static !important; }
+    button, input, select, textarea { font-family: inherit; }
+
+    .page-grid {
+      display: grid;
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      max-width: 1360px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .page-grid * { min-width: 0; }
+
+    /* Focus rings */
+    :focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      margin: 0;
+      color: var(--on-surface);
+    }
+    .title {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: var(--display-size);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      color: var(--on-surface);
+    }
+    .title mark {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      padding-inline: var(--space-sm);
+      box-decoration-break: clone;
+    }
+    .lede {
+      font-size: var(--subhead-size);
+      color: var(--on-surface-variant);
+      max-width: 68ch;
+      margin-top: var(--space-sm);
+      margin-bottom: 0;
+    }
+    .section-title {
+      font-size: var(--headline-size);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-top: var(--space-sm);
+    }
+    .kicker {
+      display: inline-block;
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      background: var(--primary);
+      color: var(--on-primary);
+      padding: var(--space-xs) var(--space-sm);
+      border-radius: var(--rounded);
+    }
+    .kicker--yellow {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+      border: var(--border-medium);
+    }
+    .kicker--blue {
+      background: var(--tertiary);
+      color: var(--on-tertiary);
+    }
+    .tabular {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Bauhaus blocks & rules */
+    .block {
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+      box-shadow: var(--offset-shadow);
+      background: var(--surface-container-low);
+      padding: var(--space-lg);
+    }
+    .block--yellow {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    .block--blue {
+      background: var(--tertiary);
+      color: var(--on-tertiary);
+    }
+    .block--blue h2,
+    .block--blue h3,
+    .block--blue p,
+    .block--blue .muted-light {
+      color: var(--on-tertiary);
+    }
+    .section-open {
+      --accent: var(--tertiary);
+      border-top: var(--space-sm) solid var(--accent);
+      padding-top: var(--space-lg);
+    }
+    .section-open--red { --accent: var(--secondary); }
+    .section-open--yellow { --accent: var(--primary-container); }
+    .section-open--black { --accent: var(--primary); }
+    .divider { border-top: var(--rule-heavy); margin-block: var(--space-md); }
+
+    /* Masthead & Status Strip */
+    .masthead {
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+      border-bottom: var(--rule-heavy);
+      padding-bottom: var(--space-lg);
+    }
+    .status-stack {
+      display: grid;
+      gap: var(--space-sm);
+    }
+    .status-tile {
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+      box-shadow: var(--offset-shadow-sm);
+      background: var(--surface-container);
+      padding: var(--space-md);
+    }
+    .status-label {
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--on-surface-variant);
+      display: block;
+    }
+    .status-value {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: var(--subhead-size);
+      color: var(--on-surface);
+      margin-top: var(--space-xs);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: var(--border-medium);
+      border-radius: var(--rounded);
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: var(--space-xs) var(--space-sm);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+    }
+    .badge--yellow { background: var(--primary-container); color: var(--on-primary-container); }
+    .badge--blue { background: var(--tertiary); color: var(--on-tertiary); }
+    .badge--black { background: var(--primary); color: var(--on-primary); }
+    .badge--ok { background: var(--positive-tint); color: var(--positive); border-color: var(--positive); }
+    .badge--err { background: var(--error-tint); color: var(--error); border-color: var(--error); }
+
+    /* Navigation Tabs */
+    .nav-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+      box-shadow: var(--offset-shadow-sm);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      cursor: pointer;
+      transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
+    }
+    .btn:hover:not(:disabled) {
+      background: var(--primary);
+      color: var(--on-primary);
+      transform: translate(-1px, -1px);
+      box-shadow: var(--offset-shadow);
+    }
+    .btn:active:not(:disabled) {
+      transform: translate(3px, 3px);
+      box-shadow: none;
+    }
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .btn--primary {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    .btn--blue {
+      background: var(--tertiary);
+      color: var(--on-tertiary);
+    }
+    .btn--active {
+      background: var(--primary-container);
+      color: var(--on-primary-container);
+    }
+    .btn--danger {
+      background: var(--error-tint);
+      color: var(--error);
+      border-color: var(--error);
+    }
+    .btn--danger:hover:not(:disabled) {
+      background: var(--error);
+      color: var(--on-error);
+    }
+
+    /* Alert & Penalty Banners */
+    .alert-banner {
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+      box-shadow: var(--offset-shadow);
+      padding: var(--space-md) var(--space-lg);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+    .alert-banner--error {
+      background: var(--error-tint);
+      border-color: var(--error);
+      color: var(--error);
+    }
+    .alert-banner--info {
+      background: var(--tertiary-tint);
+      border-color: var(--tertiary);
+      color: var(--on-surface);
+    }
+    .alert-banner--ok {
+      background: var(--positive-tint);
+      border-color: var(--positive);
+      color: var(--positive);
+    }
+
+    /* Views */
+    .view-panel { display: none; }
+    .view-panel.is-active { display: grid; gap: var(--space-xl); }
+    .is-hidden { display: none !important; }
+
+    /* KPI Row */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .kpi-card {
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+      box-shadow: var(--offset-shadow-sm);
+      background: var(--surface-container-low);
+      padding: var(--space-md);
+    }
+    .kpi-card--accent {
+      background: var(--primary-container);
+    }
+    .kpi-num {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: clamp(2rem, 1.6rem + 1.4vw, 2.75rem);
+      line-height: 1;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      margin-top: var(--space-xs);
+    }
+    .kpi-caption {
+      font-size: 0.9rem;
+      color: var(--on-surface-variant);
+      margin-top: var(--space-xs);
+    }
+
+    /* Roster 34 Names */
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-md);
+      align-items: end;
+    }
+    .field-group {
+      display: grid;
+      gap: var(--space-xs);
+      flex: 1 1 260px;
+    }
+    .field-label {
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--on-surface);
+    }
+    .input-box {
+      width: 100%;
+      min-height: 44px;
+      padding: var(--space-sm) var(--space-md);
+      font-size: var(--body-size);
+      color: var(--on-surface);
+      background: var(--surface-container-low);
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+    }
+    .input-box:focus {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+      background: var(--on-primary);
+    }
+    .roster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr));
+      gap: var(--space-md);
+    }
+    .student-btn {
+      text-align: left;
+      display: grid;
+      gap: var(--space-xs);
+      min-height: 76px;
+      padding: var(--space-md);
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+      box-shadow: var(--offset-shadow-sm);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      cursor: pointer;
+      transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+    }
+    .student-btn:hover {
+      background: var(--primary-container);
+      transform: translate(-1px, -1px);
+    }
+    .student-btn.is-assigned {
+      background: var(--surface-container);
+    }
+    .student-btn.is-me {
+      background: var(--tertiary);
+      color: var(--on-tertiary);
+    }
+    .student-btn.is-me .student-meta {
+      color: var(--on-tertiary);
+    }
+    .student-name {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+    }
+    .student-meta {
+      font-family: var(--font-label);
+      font-weight: 600;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--on-surface-variant);
+    }
+
+    /* Concept Cards + Interactive Vector Lab */
+    .asymmetric-split {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+    .concept-card {
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+      box-shadow: var(--offset-shadow-sm);
+      background: var(--surface-container-low);
+      padding: var(--space-md);
+      display: grid;
+      gap: var(--space-sm);
+    }
+    .formula-box {
+      border: var(--border-medium);
+      background: var(--surface-container-high);
+      padding: var(--space-sm) var(--space-md);
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+    }
+    .diagram-frame {
+      border: var(--border-thick);
+      background: var(--on-primary);
+      padding: var(--space-md);
+      border-radius: var(--rounded);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+    }
+    .diagram-frame svg {
+      width: 100%;
+      max-width: 440px;
+      height: auto;
+      display: block;
+    }
+
+    /* Quiz Arena */
+    .quiz-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: var(--space-lg);
+      align-items: start;
+    }
+    .question-text {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: clamp(1.25rem, 1.05rem + 0.7vw, 1.65rem);
+      line-height: 1.3;
+      color: var(--on-surface);
+      margin-block: var(--space-md);
+    }
+    .options-grid {
+      display: grid;
+      gap: var(--space-md);
+    }
+    .option-btn {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      width: 100%;
+      min-height: 56px;
+      padding: var(--space-md);
+      text-align: left;
+      font-size: 1.08rem;
+      font-weight: 600;
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+      box-shadow: var(--offset-shadow-sm);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      cursor: pointer;
+      transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
+    }
+    .option-btn:hover:not(:disabled) {
+      background: var(--primary-container);
+      transform: translate(-1px, -1px);
+    }
+    .option-btn:disabled { cursor: default; }
+    .option-btn.is-correct {
+      background: var(--positive-tint);
+      border-color: var(--positive);
+      color: var(--positive);
+    }
+    .option-btn.is-wrong {
+      background: var(--error-tint);
+      border-color: var(--error);
+      color: var(--error);
+    }
+    .option-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+      border: var(--border-medium);
+      background: var(--primary);
+      color: var(--on-primary);
+      font-family: var(--font-headline);
+      font-weight: 700;
+    }
+    .q-nav-dots {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+    .q-dot {
+      min-width: 44px;
+      min-height: 44px;
+      border: var(--border-medium);
+      background: var(--surface-container-low);
+      color: var(--on-surface);
+      font-family: var(--font-label);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .q-dot.is-current {
+      background: var(--primary-container);
+      box-shadow: var(--offset-shadow-sm);
+    }
+    .q-dot.is-done-ok {
+      background: var(--positive);
+      color: var(--on-positive);
+    }
+    .q-dot.is-done-err {
+      background: var(--error);
+      color: var(--on-error);
+    }
+
+    /* Scoreboard & Squads */
+    .squad-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+      gap: var(--space-lg);
+    }
+    .squad-card {
+      border: var(--border-thick);
+      border-radius: var(--rounded);
+      box-shadow: var(--offset-shadow);
+      background: var(--surface-container-low);
+      padding: var(--space-md);
+      display: grid;
+      gap: var(--space-sm);
+      align-content: start;
+    }
+    .squad-card--leader {
+      background: var(--primary-container);
+    }
+    .squad-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      border-bottom: var(--border-medium);
+      padding-bottom: var(--space-sm);
+    }
+    .squad-score {
+      font-family: var(--font-headline);
+      font-weight: 700;
+      font-size: 2.2rem;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .member-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: grid;
+      gap: var(--space-xs);
+    }
+    .member-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-xs) var(--space-sm);
+      border-bottom: 1px solid var(--outline-variant);
+      font-size: 0.94rem;
+    }
+    .chart-box {
+      position: relative;
+      min-height: 360px;
+      width: 100%;
+    }
+
+    /* Tables */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.96rem;
+    }
+    th {
+      background: var(--surface-container-high);
+      font-family: var(--font-label);
+      font-weight: 700;
+      font-size: var(--label-size);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: left;
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: var(--border-thick);
+    }
+    td {
+      padding: var(--space-sm) var(--space-md);
+      border-bottom: 1px solid var(--outline-variant);
+      vertical-align: middle;
+    }
+    td.num, th.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Slider inputs */
+    .range-input {
+      width: 100%;
+      accent-color: var(--tertiary);
+      cursor: pointer;
+    }
+    .slider-pair {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 96px;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+
+    /* Container query example for squad cards */
+    .squad-wrap { container-type: inline-size; }
+
+    @media (max-width: 900px) {
+      .masthead,
+      .asymmetric-split,
+      .quiz-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 640px) {
+      .page-grid {
+        padding: var(--space-md);
+        gap: var(--space-lg);
+      }
+      .block { padding: var(--space-md); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-grid">
+    <!-- MASTHEAD -->
+    <header class="masthead">
+      <div>
+        <span class="kicker">Fisika Kelas XI &middot; Kurikulum Merdeka</span>
+        <h1 class="title" style="margin-top: var(--space-sm);">Arena Fisika XI: <mark>Usaha &amp; Energi</mark></h1>
+        <p class="lede">Kompetisi beregu 7 regu (34 siswa) meliputi Usaha, Usaha Pegas, Energi Kinetik, Energi Potensial, Kekekalan Energi Mekanik, Daya, dan Efisiensi Daya.</p>
+      </div>
+      <div class="status-stack">
+        <div class="status-tile">
+          <span class="status-label">Status Permainan</span>
+          <div class="status-value" id="hdr-game-status">
+            <span class="badge badge--yellow">Menunggu Operator</span>
+          </div>
+        </div>
+        <div class="status-tile">
+          <span class="status-label">Sesi Aktif &amp; Sensor Tab-Switch</span>
+          <div class="status-value" id="hdr-player-status">
+            <span>Belum memilih nama</span>
+          </div>
+        </div>
+        <div class="status-tile">
+          <span class="status-label">Sinkronisasi Lintas Tab &amp; Perangkat</span>
+          <div class="status-value" id="hdr-sync-status">
+            <span class="badge badge--ok">Live Broadcast + Sesi Aktif</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- PENALTY / SYSTEM BANNER -->
+    <div id="live-alert-banner" class="alert-banner alert-banner--info" role="status" aria-live="polite">
+      <div>
+        <strong>Aturan Arena &amp; Anti-Curang:</strong> Klik nama Anda untuk masuk ke salah satu dari 7 regu secara acak. Saat permainan <strong>BERLANGSUNG</strong>, berpindah tab atau keluar dari halaman akan otomatis dideteksi oleh <em>Page Visibility API</em> dan mengurangi <strong>5 poin</strong> regu Anda!
+      </div>
+      <span class="badge badge--black tabular" id="badge-registered-count">0 / 34 Siswa Masuk</span>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="nav-bar" aria-label="Navigasi utama permainan">
+      <div class="nav-tabs">
+        <button type="button" class="btn btn--active" id="tab-btn-lobby" onclick="switchTab('lobby')">1. Lobi &amp; Registrasi (34)</button>
+        <button type="button" class="btn" id="tab-btn-arena" onclick="switchTab('arena')">2. Arena Kuis &amp; Diagram</button>
+        <button type="button" class="btn" id="tab-btn-scoreboard" onclick="switchTab('scoreboard')">3. Papan Skor &amp; Grafik Live</button>
+        <button type="button" class="btn" id="tab-btn-sync" onclick="switchTab('sync')">4. Sinkron Lintas Perangkat</button>
+      </div>
+      <div>
+        <button type="button" class="btn btn--blue" id="tab-btn-operator" onclick="switchTab('operator')">Mode Operator Guru</button>
+      </div>
+    </nav>
+
+    <!-- VIEW 1: LOBBY, REGISTRASI 34 NAMA & LAB KONSEP -->
+    <main id="view-lobby" class="view-panel is-active">
+      <section class="section-open section-open--yellow">
+        <span class="kicker kicker--yellow">Langkah 1 &middot; Registrasi &amp; Randomizer 7 Regu</span>
+        <h2 class="section-title">Pilih Nama Anda untuk Masuk Regu Secara Acak</h2>
+        <p style="margin-top: var(--space-xs); color: var(--on-surface-variant);">Tersedia 34 nama siswa. Mengklik nama otomatis membagikan Anda ke salah satu dari 7 regu secara acak dan seimbang (4&ndash;5 siswa per regu).</p>
+
+        <div id="my-assignment-box" class="block block--yellow is-hidden" style="margin-top: var(--space-md);">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-md);">
+            <div>
+              <span class="kicker">Identitas &amp; Regu Anda</span>
+              <h3 id="my-assignment-title" style="font-size: var(--headline-size); margin-top: var(--space-xs);">&mdash;</h3>
+              <p id="my-assignment-sub" style="margin: var(--space-xs) 0 0 0; font-weight: 600;"></p>
+            </div>
+            <div style="display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <button type="button" class="btn btn--blue" onclick="switchTab('arena')">Masuk ke Arena Kuis</button>
+              <button type="button" class="btn" onclick="clearCurrentDevicePlayer()">Ganti Perangkat / Keluar Nama</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="block" style="margin-top: var(--space-lg);">
+          <div class="filter-row">
+            <div class="field-group">
+              <label for="roster-search" class="field-label">Cari Nama Siswa (34 Nama Terdaftar)</label>
+              <input type="text" id="roster-search" class="input-box" oninput="renderRoster()" autocomplete="off">
+            </div>
+            <div class="field-group" style="max-width: 280px;">
+              <label for="roster-filter" class="field-label">Filter Status</label>
+              <select id="roster-filter" class="input-box" onchange="renderRoster()">
+                <option value="all">Semua Siswa (34)</option>
+                <option value="unassigned">Belum Masuk Regu</option>
+                <option value="assigned">Sudah Masuk Regu</option>
+              </select>
+            </div>
+          </div>
+
+          <div id="roster-grid" class="roster-grid" style="margin-top: var(--space-lg);"></div>
+        </div>
+      </section>
+
+      <!-- RINGKASAN KONSEP + MINI SIMULATOR PROYEKTOR -->
+      <section class="section-open">
+        <span class="kicker kicker--blue">Pra-Permainan &middot; Visualisasi Konsep Fisika</span>
+        <h2 class="section-title">Peta Rumus &amp; Simulator Vektor Usaha ($W = F \cdot s \cdot \cos\theta$)</h2>
+        <div class="asymmetric-split" style="margin-top: var(--space-lg);">
+          <div class="card-grid">
+            <article class="concept-card">
+              <span class="badge badge--blue">1. Usaha</span>
+              <div class="formula-box">W = F &middot; s &middot; cos(&theta;)</div>
+              <p style="margin: 0;">Gaya searah perpindahan menghasilkan usaha positif. Jika gaya tegak lurus perpindahan (&theta; = 90&deg;), maka <strong>W = 0</strong>.</p>
+            </article>
+            <article class="concept-card">
+              <span class="badge badge--yellow">2. Usaha &amp; Ep Pegas</span>
+              <div class="formula-box">F = k &middot; &Delta;x &nbsp;|&nbsp; Ep = &frac12; k (&Delta;x)&sup2;</div>
+              <p style="margin: 0;">Energi potensial pegas setara dengan luas segitiga di bawah grafik gaya terhadap pertambahan panjang (F&ndash;&Delta;x).</p>
+            </article>
+            <article class="concept-card">
+              <span class="badge badge--black">3. Ek &amp; Teorema W-&Delta;Ek</span>
+              <div class="formula-box">Ek = &frac12; m v&sup2; &nbsp;|&nbsp; W<sub>tot</sub> = &Delta;Ek</div>
+              <p style="margin: 0;">Usaha total oleh seluruh gaya pada benda sama dengan perubahan energi kinetiknya: &frac12;m(v<sub>2</sub>&sup2; &minus; v<sub>1</sub>&sup2;).</p>
+            </article>
+            <article class="concept-card">
+              <span class="badge badge--blue">4. Ep Gravitasi</span>
+              <div class="formula-box">Ep = m &middot; g &middot; h &nbsp;|&nbsp; W = &minus;&Delta;Ep</div>
+              <p style="margin: 0;">Usaha gaya gravitasi hanya bergantung pada selisih ketinggian: m&middot;g&middot;(h<sub>1</sub> &minus; h<sub>2</sub>).</p>
+            </article>
+            <article class="concept-card">
+              <span class="badge badge--yellow">5. Kekekalan Em</span>
+              <div class="formula-box">Ek<sub>1</sub> + Ep<sub>1</sub> = Ek<sub>2</sub> + Ep<sub>2</sub></div>
+              <p style="margin: 0;">Jika tidak ada gaya gesek non-konservatif, jumlah energi kinetik dan potensial selalu tetap.</p>
+            </article>
+            <article class="concept-card">
+              <span class="badge badge--black">6. Daya &amp; Efisiensi</span>
+              <div class="formula-box">P = W/t = F&middot;v &nbsp;|&nbsp; &eta; = (P<sub>out</sub>/P<sub>in</sub>)&times;100%</div>
+              <p style="margin: 0;">Daya mengukur laju usaha per detik (Watt). Efisiensi menunjukkan rasio daya berguna terhadap daya masuk.</p>
+            </article>
+          </div>
+
+          <!-- INTERACTIVE VECTOR LAB -->
+          <div class="block">
+            <span class="kicker kicker--yellow">Laboratorium Mini Proyektor</span>
+            <h3 style="margin-top: var(--space-sm); font-size: var(--subhead-size);">Eksplorasi Sudut Gaya Terhadap Usaha</h3>
+            <div class="diagram-frame" id="lab-svg-box" style="margin-top: var(--space-md);"></div>
+            <div class="kpi-card kpi-card--accent" style="margin-top: var(--space-md);">
+              <span class="status-label">Hasil Usaha (W)</span>
+              <div class="kpi-num" id="lab-work-output">100,0 J</div>
+              <div class="kpi-caption" id="lab-work-note">Komponen gaya horizontal efektif menarik benda.</div>
+            </div>
+            <div style="display: grid; gap: var(--space-md); margin-top: var(--space-md);">
+              <div>
+                <label for="lab-force-num" class="field-label">Gaya Tarik F (Newton)</label>
+                <div class="slider-pair">
+                  <input type="range" id="lab-force-range" class="range-input" min="10" max="100" step="5" value="40" oninput="syncLabForceFromSlider(this.value)">
+                  <input type="number" id="lab-force-num" class="input-box" min="10" max="100" step="5" value="40" oninput="syncLabForceFromNumber(this.value)">
+                </div>
+              </div>
+              <div>
+                <label for="lab-dist-num" class="field-label">Perpindahan s (meter)</label>
+                <div class="slider-pair">
+                  <input type="range" id="lab-dist-range" class="range-input" min="1" max="20" step="1" value="5" oninput="syncLabDistFromSlider(this.value)">
+                  <input type="number" id="lab-dist-num" class="input-box" min="1" max="20" step="1" value="5" oninput="syncLabDistFromNumber(this.value)">
+                </div>
+              </div>
+              <div>
+                <label for="lab-angle-num" class="field-label">Sudut Gaya &theta; (0&deg; &ndash; 90&deg;)</label>
+                <div class="slider-pair">
+                  <input type="range" id="lab-angle-range" class="range-input" min="0" max="90" step="15" value="60" oninput="syncLabAngleFromSlider(this.value)">
+                  <input type="number" id="lab-angle-num" class="input-box" min="0" max="90" step="15" value="60" oninput="syncLabAngleFromNumber(this.value)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- VIEW 2: ARENA KUIS & DIAGRAM FISIKA -->
+    <section id="view-arena" class="view-panel">
+      <div class="section-open section-open--red">
+        <span class="kicker">Arena Pertandingan &middot; 14 Soal Konsep &amp; Hitungan</span>
+        <h2 class="section-title">Kerjakan Soal Bersama Regu Anda</h2>
+        <div id="arena-gate-msg" class="block block--yellow" style="margin-top: var(--space-md);">
+          <h3 style="font-size: var(--headline-size);">Permainan Belum Dapat Dimulai</h3>
+          <p id="arena-gate-detail" style="margin: var(--space-xs) 0 0 0;">Pastikan Anda sudah memilih nama di Lobi dan tunggu Operator Guru menekan tombol <strong>Mulai Game (Start)</strong>.</p>
+        </div>
+
+        <div id="arena-play-area" class="is-hidden" style="margin-top: var(--space-lg); display: grid; gap: var(--space-lg);">
+          <!-- Player & Squad Banner -->
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <span class="status-label">Peserta Aktif</span>
+              <div class="kpi-num" style="font-size: 1.5rem;" id="arena-player-name">&mdash;</div>
+              <div class="kpi-caption" id="arena-squad-name">Regu &mdash;</div>
+            </div>
+            <div class="kpi-card kpi-card--accent">
+              <span class="status-label">Skor Regu Saat Ini</span>
+              <div class="kpi-num" id="arena-squad-score">0</div>
+              <div class="kpi-caption">Nilai tiap anggota saling menopang</div>
+            </div>
+            <div class="kpi-card">
+              <span class="status-label">Progres Pribadi</span>
+              <div class="kpi-num" id="arena-progress">0 / 14</div>
+              <div class="kpi-caption">Benar +10 poin &middot; Tab-Switch &minus;5 poin</div>
+            </div>
+            <div class="kpi-card">
+              <span class="status-label">Pelanggaran Tab-Switch</span>
+              <div class="kpi-num" id="arena-violations">0</div>
+              <div class="kpi-caption">Sensor Page Visibility API aktif</div>
+            </div>
+          </div>
+
+          <!-- Question Navigator -->
+          <div class="block">
+            <span class="field-label">Navigasi Nomor Soal (1&ndash;14)</span>
+            <div class="q-nav-dots" id="arena-q-dots" style="margin-top: var(--space-sm);"></div>
+          </div>
+
+          <!-- Active Question + Physics Diagram -->
+          <div class="quiz-layout">
+            <div class="block">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-sm);">
+                <span class="badge badge--blue" id="arena-q-topic">Topik</span>
+                <span class="badge badge--black tabular" id="arena-q-number">Soal 1 / 14</span>
+              </div>
+              <p class="question-text" id="arena-q-text">Memuat soal...</p>
+              <div class="options-grid" id="arena-q-options"></div>
+              <div id="arena-q-feedback" class="alert-banner is-hidden" style="margin-top: var(--space-md);"></div>
+              <div style="display: flex; justify-content: space-between; gap: var(--space-md); margin-top: var(--space-lg); flex-wrap: wrap;">
+                <button type="button" class="btn" onclick="prevQuestion()">Soal Sebelumnya</button>
+                <button type="button" class="btn btn--primary" onclick="nextQuestion()">Soal Berikutnya</button>
+              </div>
+            </div>
+
+            <div class="block">
+              <span class="kicker kicker--yellow">Ilustrasi &amp; Diagram Fisika</span>
+              <h3 id="arena-diagram-title" style="margin-top: var(--space-sm); font-size: var(--subhead-size);">Diagram Konsep</h3>
+              <div class="diagram-frame" id="arena-diagram-frame" style="margin-top: var(--space-md);"></div>
+              <p id="arena-diagram-caption" style="margin: var(--space-sm) 0 0 0; color: var(--on-surface-variant); font-size: 0.95rem;"></p>
+              <div class="divider"></div>
+              <p style="margin: 0; font-size: 0.9rem; color: var(--on-surface-variant);">
+                <strong>Catatan Siswa:</strong> Pembahasan lengkap dikunci oleh sistem dan hanya dapat dibuka oleh Guru Operator (kode akses <code>FISIKAXI</code>) saat evaluasi bersama di proyektor.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: PAPAN SKOR & GRAFIK LIVE -->
+    <section id="view-scoreboard" class="view-panel">
+      <div class="section-open">
+        <span class="kicker kicker--blue">Layar Proyektor &amp; Siswa &middot; Pembaruan Langsung</span>
+        <h2 class="section-title">Papan Skor 7 Regu &amp; Grafik Capaian Kelas</h2>
+
+        <div class="kpi-grid" style="margin-top: var(--space-lg);">
+          <div class="kpi-card kpi-card--accent">
+            <span class="status-label">Peringkat #1 Sementara</span>
+            <div class="kpi-num" style="font-size: 1.55rem;" id="sb-top-squad">&mdash;</div>
+            <div class="kpi-caption" id="sb-top-score">0 poin</div>
+          </div>
+          <div class="kpi-card">
+            <span class="status-label">Total Jawaban Masuk</span>
+            <div class="kpi-num" id="sb-total-answers">0</div>
+            <div class="kpi-caption">Dari seluruh peserta aktif</div>
+          </div>
+          <div class="kpi-card">
+            <span class="status-label">Akurasi Kelas</span>
+            <div class="kpi-num" id="sb-accuracy">0%</div>
+            <div class="kpi-caption">Persentase jawaban benar</div>
+          </div>
+          <div class="kpi-card">
+            <span class="status-label">Total Penalti Tab-Switch</span>
+            <div class="kpi-num" id="sb-total-penalties">0</div>
+            <div class="kpi-caption">Setiap pelanggaran = &minus;5 poin regu</div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="asymmetric-split" style="margin-top: var(--space-lg);">
+          <div class="block">
+            <span class="kicker">Grafik Skor Regu</span>
+            <h3 style="margin-top: var(--space-xs); font-size: var(--subhead-size);">Perbandingan Nilai Total 7 Regu</h3>
+            <div class="chart-box" style="margin-top: var(--space-md);">
+              <canvas id="chart-squads"></canvas>
+            </div>
+          </div>
+          <div class="block">
+            <span class="kicker kicker--yellow">Grafik Penguasaan Materi</span>
+            <h3 style="margin-top: var(--space-xs); font-size: var(--subhead-size);">Akurasi Jawaban per Topik Fisika (%)</h3>
+            <div class="chart-box" style="margin-top: var(--space-md);">
+              <canvas id="chart-topics"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- 7 Squad Cards -->
+        <div style="margin-top: var(--space-lg);">
+          <h3 style="font-size: var(--headline-size); margin-bottom: var(--space-md);">Komposisi 7 Regu &amp; Kontribusi Anggota (Saling Menopang)</h3>
+          <div id="squad-board-grid" class="squad-grid"></div>
+        </div>
+
+        <!-- Live Activity & Violation Log -->
+        <div class="block" style="margin-top: var(--space-lg);">
+          <span class="kicker">Log Aktivitas &amp; Peringatan Tab-Switch Live</span>
+          <h3 style="margin-top: var(--space-xs); font-size: var(--subhead-size);">Rekam Jejak Kejadian Terbaru</h3>
+          <div class="table-wrap" style="margin-top: var(--space-md);">
+            <table>
+              <thead>
+                <tr>
+                  <th>Waktu</th>
+                  <th>Siswa</th>
+                  <th>Regu</th>
+                  <th>Kejadian</th>
+                  <th class="num">Dampak Poin</th>
+                </tr>
+              </thead>
+              <tbody id="live-log-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: SINKRONISASI LINTAS PERANGKAT -->
+    <section id="view-sync" class="view-panel">
+      <div class="section-open section-open--black">
+        <span class="kicker">Sinkronisasi Data &amp; Arsitektur Sesi</span>
+        <h2 class="section-title">Sinkronisasi Real-Time &amp; Lintas Perangkat</h2>
+        <div class="asymmetric-split" style="margin-top: var(--space-lg);">
+          <div class="block">
+            <h3 style="font-size: var(--subhead-size);">Cara Kerja Sinkronisasi di Halaman Ini</h3>
+            <ul style="margin-top: var(--space-sm); padding-left: 1.25rem; display: grid; gap: var(--space-sm);">
+              <li><strong>Antar-Tab Browser (Otomatis Real-Time):</strong> Menggunakan <code>BroadcastChannel</code> dan penyimpanan sesi <code>notebookAppApi</code>, setiap perubahan (siswa masuk regu, jawaban soal, start/stop guru, dan penalti tab-switch &minus;5) langsung tersinkron seketika di semua tab yang terbuka pada browser yang sama.</li>
+              <li><strong>Lintas Perangkat Berbeda (Tanpa Server Eksternal):</strong> Karena file HTML mandiri berjalan di lingkungan sandbox tertutup tanpa server database eksternal, gunakan fitur <strong>Paket Sinkronisasi Sesi</strong> di samping untuk memindahkan/menggabungkan data regu &amp; skor antar perangkat HP siswa dan laptop proyektor guru secara instan.</li>
+            </ul>
+            <div style="margin-top: var(--space-md); display: flex; flex-wrap: wrap; gap: var(--space-sm);">
+              <button type="button" class="btn btn--primary" onclick="exportSyncCode()">Buat Kode Sinkronisasi Terbaru</button>
+              <button type="button" class="btn" onclick="copySyncCode()">Salin Kode ke Papan Klip</button>
+              <button type="button" class="btn btn--blue" onclick="downloadResultsCSV()">Unduh Rekap Nilai CSV</button>
+            </div>
+          </div>
+          <div class="block">
+            <label for="sync-payload-box" class="field-label">Kode Paket Data Sesi (Salin dari Guru / Tempel dari Siswa)</label>
+            <textarea id="sync-payload-box" class="input-box" rows="6" style="margin-top: var(--space-xs); font-size: 0.88rem;"></textarea>
+            <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm); flex-wrap: wrap;">
+              <button type="button" class="btn btn--blue" onclick="importSyncCode()">Gabungkan / Muat Data Sesi</button>
+            </div>
+            <p id="sync-feedback-msg" style="margin: var(--space-sm) 0 0 0; font-weight: 600;"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 5: MODE OPERATOR GURU (TERKUNCI KODE: FISIKAXI) -->
+    <section id="view-operator" class="view-panel">
+      <div class="section-open section-open--red">
+        <span class="kicker">Akses Terbatas &middot; Kontrol Master Guru</span>
+        <h2 class="section-title">Panel Operator Guru &amp; Kunci Pembahasan</h2>
+
+        <!-- Lock Screen -->
+        <div id="operator-lock-box" class="block" style="max-width: 560px; margin-top: var(--space-lg);">
+          <span class="badge badge--yellow">Terkunci</span>
+          <h3 style="margin-top: var(--space-sm); font-size: var(--subhead-size);">Masukkan Kode Akses Operator</h3>
+          <p style="margin-top: var(--space-xs); color: var(--on-surface-variant);">Kontrol mulai permainan (Start), pemantauan detail 34 siswa, serta pembahasan soal lengkap tersembunyi hingga kode akses benar dimasukkan.</p>
+          <div class="field-group" style="margin-top: var(--space-md);">
+            <label for="operator-code-input" class="field-label">Kode Akses Operator Guru</label>
+            <input type="password" id="operator-code-input" class="input-box" autocomplete="off" onkeydown="if(event.key==='Enter'){unlockOperator();}">
+          </div>
+          <p id="operator-auth-error" style="color: var(--error); font-weight: 700; margin: var(--space-sm) 0 0 0;" class="is-hidden"></p>
+          <div style="margin-top: var(--space-md); display: flex; gap: var(--space-sm);">
+            <button type="button" class="btn btn--primary" onclick="unlockOperator()">Buka Mode Operator</button>
+          </div>
+        </div>
+
+        <!-- Unlocked Console -->
+        <div id="operator-console-box" class="is-hidden" style="margin-top: var(--space-lg); display: grid; gap: var(--space-xl);">
+          <!-- Master Controls -->
+          <div class="block block--yellow">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: var(--space-md);">
+              <div>
+                <span class="badge badge--black">Operator Aktif (Kode: FISIKAXI)</span>
+                <h3 style="font-size: var(--headline-size); margin-top: var(--space-xs);">Kendali Master Permainan</h3>
+              </div>
+              <button type="button" class="btn" onclick="lockOperator()">Kunci Kembali Panel Guru</button>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-md); margin-top: var(--space-md);">
+              <button type="button" class="btn btn--blue" onclick="setGameStatus('active')">START / Mulai Game Sekarang</button>
+              <button type="button" class="btn" onclick="setGameStatus('waiting')">Jeda (Kembali ke Lobi)</button>
+              <button type="button" class="btn" onclick="setGameStatus('finished')">FINISH / Akhiri Permainan</button>
+              <button type="button" class="btn" onclick="autoAssignRemainingStudents()">Acak Otomatis Sisa Siswa ke 7 Regu</button>
+              <button type="button" class="btn" onclick="simulateTabSwitchDemo()">Uji Simulasi Penalti Tab-Switch (&minus;5)</button>
+              <button type="button" class="btn btn--danger" id="btn-reset-all" onclick="resetAllGameData(this)">Reset Seluruh Sesi</button>
+            </div>
+            <p id="operator-action-msg" style="margin: var(--space-md) 0 0 0; font-weight: 700;"></p>
+          </div>
+
+          <!-- Live Monitoring Table of 34 Students -->
+          <div class="block">
+            <span class="kicker kicker--blue">Pemantauan Progres Live (34 Siswa)</span>
+            <h3 style="margin-top: var(--space-xs); font-size: var(--subhead-size);">Status Regu, Progres Soal, Kontribusi &amp; Pelanggaran Siswa</h3>
+            <div class="table-wrap" style="margin-top: var(--space-md);">
+              <table>
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Nama Siswa</th>
+                    <th>Regu</th>
+                    <th class="num">Soal Terjawab</th>
+                    <th class="num">Benar</th>
+                    <th class="num">Tab-Switch</th>
+                    <th class="num">Net Poin</th>
+                    <th>Aksi Operator</th>
+                  </tr>
+                </thead>
+                <tbody id="operator-student-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Hidden Detailed Explanations (Revealed ONLY for FISIKAXI) -->
+          <div class="block">
+            <span class="kicker">Kunci Jawaban &amp; Pembahasan Lengkap (Eksklusif Guru)</span>
+            <h3 style="margin-top: var(--space-xs); font-size: var(--subhead-size);">Pembahasan 14 Soal Usaha &amp; Energi untuk Proyektor</h3>
+            <p style="margin-top: var(--space-xs); color: var(--on-surface-variant);">Bagian ini tersembunyi di mode siswa dan hanya terbuka karena Anda telah memasukkan kode <code>FISIKAXI</code>.</p>
+            <div id="operator-solutions-list" style="display: grid; gap: var(--space-md); margin-top: var(--space-lg);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer style="border-top: var(--rule-heavy); padding-top: var(--space-md); display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-md); color: var(--on-surface-variant); font-size: 0.9rem;">
+      <div><strong>Arena Fisika XI: Usaha &amp; Energi</strong> &middot; Materi Usaha, Pegas, Ek, Ep, Em, Daya, dan Efisiensi Daya.</div>
+      <div>Sumber Materi: Rangkuman Riset Usaha &amp; Energi Fisika XI (Ruangguru, Modul Fisika SMA Kurikulum Merdeka / K13, Edcent &amp; Tuntas.org).</div>
+    </footer>
+  </div>
+
+  <api-shim></api-shim>
+  <script>
+    // =========================================================================
+    // 1. MASTER DATA: 34 SISWA, 7 REGU, 14 SOAL + PEMBAHASAN + DIAGRAM SVG
+    // =========================================================================
+    const STUDENT_NAMES = [
+      `ADITYA`, `ADSEN`, `ANDREAN`, `ANJU`, `CINDY`,
+      `DHEA`, `DIRA`, `ERICK`, `EZKIEL`, `FEBRIANTO`,
+      `FEBY`, `GRACE`, `GRACEIA`, `HISOR`, `JAGU`,
+      `JAWAKTA`, `JERICO HAPOSAN`, `JERICO`, `JORDAN`, `JOSUA`,
+      `LIVIA`, `MALVIN`, `MATTEW`, `MAULANA`, `NATHANILEL`,
+      `OSWWIN`, `SAMULEL RAFAEL`, `SAMULE`, `SANDO`, `SHANIKA`,
+      `STIVEN ALBANI`, `STIVEN`, `TRISPANIA`, `RUTH`
+    ];
+
+    const SQUADS = [
+      { id: 1, name: `Regu 1: Vektor Joule`, focus: `Usaha & Arah Gaya`, symbol: `■` },
+      { id: 2, name: `Regu 2: Konstanta Hooke`, focus: `Elastisitas Pegas`, symbol: `▲` },
+      { id: 3, name: `Regu 3: Impuls Kinetik`, focus: `Gerak & Kecepatan`, symbol: `●` },
+      { id: 4, name: `Regu 4: Gravitasi Potensial`, focus: `Ketinggian & Medan`, symbol: `◆` },
+      { id: 5, name: `Regu 5: Mekanika Kekal`, focus: `Konservasi Energi`, symbol: `✚` },
+      { id: 6, name: `Regu 6: Turbin Watt`, focus: `Daya Mekanik`, symbol: `▬` },
+      { id: 7, name: `Regu 7: Mesin Eta`, focus: `Efisiensi Daya`, symbol: `⬢` }
+    ];
+
+    const QUESTIONS = [
+      {
+        id: 1,
+        topic: `Usaha`,
+        diagramType: `usaha_sudut`,
+        diagramTitle: `Gaya Membentuk Sudut terhadap Perpindahan`,
+        diagramCaption: `Komponen gaya searah perpindahan adalah F cos(θ).`,
+        text: `Sebuah peti bermassa 10 kg ditarik gaya F = 40 N yang membentuk sudut θ = 60° terhadap arah perpindahan mendatar sejauh s = 5 m. Berapakah usaha yang dilakukan gaya tersebut?`,
+        options: [`50 J`, `100 J`, `173 J`, `200 J`],
+        correctIndex: 1,
+        explanation: `Diketahui: F = 40 N, s = 5 m, θ = 60° (cos 60° = 0,5). Rumus: W = F · s · cos θ = 40 × 5 × 0,5 = 100 Joule.`
+      },
+      {
+        id: 2,
+        topic: `Usaha`,
+        diagramType: `usaha_tegaklurus`,
+        diagramTitle: `Gaya Tegak Lurus Perpindahan (θ = 90°)`,
+        diagramCaption: `Sudut antara gaya angkat ke atas dan perpindahan horizontal adalah 90°.`,
+        text: `Seorang siswa menjinjing tas dengan gaya ke atas sebesar 40 N sambil berjalan lurus mendatar sejauh 12 m di lantai datar. Berapa usaha yang dilakukan gaya angkat tangan terhadap tas?`,
+        options: [`0 J`, `48 J`, `120 J`, `480 J`],
+        correctIndex: 0,
+        explanation: `Arah gaya ke atas (vertikal) tegak lurus terhadap perpindahan mendatar (horizontal), sehingga θ = 90°. Karena cos 90° = 0, maka W = F · s · cos 90° = 40 × 12 × 0 = 0 Joule.`
+      },
+      {
+        id: 3,
+        topic: `Usaha Pegas`,
+        diagramType: `pegas_tarik`,
+        diagramTitle: `Regangan Pegas Hukum Hooke`,
+        diagramCaption: `Energi potensial pegas tersimpan saat pegas diregangkan sejauh Δx.`,
+        text: `Sebuah pegas memiliki konstanta pegas k = 400 N/m. Jika pegas ditarik hingga bertambah panjang Δx = 0,1 m (10 cm), berapakah energi potensial pegas yang tersimpan?`,
+        options: [`0,2 J`, `2 J`, `20 J`, `40 J`],
+        correctIndex: 1,
+        explanation: `Diketahui: k = 400 N/m, Δx = 0,1 m. Rumus: Ep = ½ · k · (Δx)² = 0,5 × 400 × (0,1)² = 200 × 0,01 = 2 Joule.`
+      },
+      {
+        id: 4,
+        topic: `Usaha Pegas`,
+        diagramType: `grafik_pegas`,
+        diagramTitle: `Grafik Gaya F terhadap Pertambahan Panjang Δx`,
+        diagramCaption: `Usaha pegas sama dengan luas daerah di bawah kurva grafik F–Δx.`,
+        text: `Grafik hubungan gaya F terhadap pertambahan panjang Δx sebuah pegas membentuk garis lurus dari titik (0, 0) ke (0,2 m; 60 N). Berapa usaha yang dibutuhkan untuk meregangkan pegas tersebut?`,
+        options: [`3 J`, `6 J`, `12 J`, `30 J`],
+        correctIndex: 1,
+        explanation: `Usaha pada pegas sama dengan luas segitiga di bawah grafik F–Δx: W = ½ · F · Δx = 0,5 × 60 N × 0,2 m = 6 Joule.`
+      },
+      {
+        id: 5,
+        topic: `Energi Kinetik`,
+        diagramType: `kinetik_laju`,
+        diagramTitle: `Energi Kinetik Gerak Translasi`,
+        diagramCaption: `Energi kinetik sebanding dengan massa dan kuadrat kelajuan benda.`,
+        text: `Sebuah benda bermassa 4 kg bergerak lurus dengan kelajuan 5 m/s. Berapakah energi kinetik benda tersebut?`,
+        options: [`10 J`, `20 J`, `50 J`, `100 J`],
+        correctIndex: 2,
+        explanation: `Diketahui: m = 4 kg, v = 5 m/s. Rumus: Ek = ½ · m · v² = 0,5 × 4 × 5² = 2 × 25 = 50 Joule.`
+      },
+      {
+        id: 6,
+        topic: `Energi Kinetik`,
+        diagramType: `teorema_ek`,
+        diagramTitle: `Teorema Usaha–Energi Kinetik`,
+        diagramCaption: `Usaha total mengubah kecepatan dari v₁ menjadi v₂.`,
+        text: `Mobil bermassa 1.000 kg mengalami percepatan dari kelajuan awal v₁ = 10 m/s menjadi v₂ = 20 m/s. Berdasarkan Teorema Usaha–Energi Kinetik, berapakah usaha total yang bekerja pada mobil?`,
+        options: [`50 kJ`, `100 kJ`, `150 kJ`, `200 kJ`],
+        correctIndex: 2,
+        explanation: `W_total = ΔEk = ½ · m · (v₂² − v₁²) = 0,5 × 1.000 × (20² − 10²) = 500 × (400 − 100) = 500 × 300 = 150.000 J = 150 kJ.`
+      },
+      {
+        id: 7,
+        topic: `Energi Potensial`,
+        diagramType: `potensial_tinggi`,
+        diagramTitle: `Energi Potensial Gravitasi pada Ketinggian h`,
+        diagramCaption: `Energi potensial diukur terhadap bidang acuan tanah (h = 0).`,
+        text: `Buah kelapa bermassa 2 kg berada pada ketinggian 8 m di atas permukaan tanah (g = 10 m/s²). Berapakah energi potensial gravitasinya?`,
+        options: [`16 J`, `80 J`, `160 J`, `320 J`],
+        correctIndex: 2,
+        explanation: `Diketahui: m = 2 kg, g = 10 m/s², h = 8 m. Rumus: Ep = m · g · h = 2 × 10 × 8 = 160 Joule.`
+      },
+      {
+        id: 8,
+        topic: `Energi Potensial`,
+        diagramType: `usaha_gravitasi`,
+        diagramTitle: `Perubahan Energi Potensial Gravitasi`,
+        diagramCaption: `Benda berpindah turun dari ketinggian h₁ ke h₂.`,
+        text: `Balok bermassa 3 kg jatuh dari ketinggian h₁ = 10 m menuju ketinggian h₂ = 4 m (g = 10 m/s²). Berapakah usaha yang dilakukan gaya gravitasi pada balok?`,
+        options: [`120 J`, `180 J`, `300 J`, `420 J`],
+        correctIndex: 1,
+        explanation: `Usaha gravitasi: W = −ΔEp = m · g · (h₁ − h₂) = 3 × 10 × (10 − 4) = 30 × 6 = 180 Joule.`
+      },
+      {
+        id: 9,
+        topic: `Energi Mekanik`,
+        diagramType: `mekanik_lengkung`,
+        diagramTitle: `Lintasan Lengkung Licin (Kekekalan Em)`,
+        diagramCaption: `Pada lintasan licin tanpa gesekan, seluruh Ep di puncak berubah menjadi Ek di dasar.`,
+        text: `Bola bermassa 1 kg dilepaskan tanpa kecepatan awal (v₁ = 0) dari puncak lintasan licin setinggi h₁ = 5 m (g = 10 m/s²). Berapa kelajuan bola saat tiba di dasar lintasan (h₂ = 0)?`,
+        options: [`5 m/s`, `10 m/s`, `15 m/s`, `20 m/s`],
+        correctIndex: 1,
+        explanation: `Kekekalan Energi Mekanik: Ek₁ + Ep₁ = Ek₂ + Ep₂ → 0 + m·g·h₁ = ½·m·v₂² + 0 → v₂ = √(2·g·h₁) = √(2 × 10 × 5) = √100 = 10 m/s.`
+      },
+      {
+        id: 10,
+        topic: `Energi Mekanik`,
+        diagramType: `mekanik_jatuh`,
+        diagramTitle: `Konservasi Energi saat Jatuh Bebas`,
+        diagramCaption: `Energi mekanik Em = Ep + Ek bernilai konstan di setiap ketinggian.`,
+        text: `Benda bermassa 2 kg jatuh bebas dari ketinggian 20 m (g = 10 m/s²). Saat berada di ketinggian 5 m dari tanah, berapakah energi kinetik benda tersebut?`,
+        options: [`100 J`, `200 J`, `300 J`, `400 J`],
+        correctIndex: 2,
+        explanation: `Energi Mekanik awal Em₁ = Ep₁ = 2 × 10 × 20 = 400 J. Pada ketinggian h₂ = 5 m, Ep₂ = 2 × 10 × 5 = 100 J. Karena Em kekal, Ek₂ = 400 − 100 = 300 Joule.`
+      },
+      {
+        id: 11,
+        topic: `Daya`,
+        diagramType: `daya_derek`,
+        diagramTitle: `Daya sebagai Laju Usaha per Waktu`,
+        diagramCaption: `P = W / t mengukur seberapa cepat usaha dilakukan dalam satuan Watt.`,
+        text: `Sebuah mesin derek melakukan usaha sebesar 6.000 J untuk mengangkat beban dalam waktu 15 detik. Berapakah daya keluaran mesin tersebut?`,
+        options: [`200 W`, `400 W`, `600 W`, `900 W`],
+        correctIndex: 1,
+        explanation: `Diketahui: W = 6.000 J, t = 15 s. Rumus: P = W / t = 6.000 / 15 = 400 Watt.`
+      },
+      {
+        id: 12,
+        topic: `Daya`,
+        diagramType: `daya_kecepatan`,
+        diagramTitle: `Hubungan Daya dengan Gaya & Kecepatan`,
+        diagramCaption: `Untuk benda berkecepatan konstan v melawan gaya F, berlaku P = F · v.`,
+        text: `Sebuah truk melaju dengan kelajuan konstan 15 m/s melawan gaya hambat total sebesar 800 N. Berapakah daya dorong yang dihasilkan mesin truk?`,
+        options: [`8 kW`, `10 kW`, `12 kW`, `15 kW`],
+        correctIndex: 2,
+        explanation: `Diketahui: F = 800 N, v = 15 m/s. Rumus: P = F · v = 800 × 15 = 12.000 W = 12 kW.`
+      },
+      {
+        id: 13,
+        topic: `Efisiensi Daya`,
+        diagramType: `efisiensi_mesin`,
+        diagramTitle: `Diagram Aliran Daya & Efisiensi (η)`,
+        diagramCaption: `Sebagian daya masukan terbuang menjadi panas; sisanya menjadi daya berguna.`,
+        text: `Sebuah pompa air listrik menerima daya masukan 500 W dan menghasilkan daya berguna untuk mengangkat air sebesar 375 W. Berapakah efisiensi (η) pompa tersebut?`,
+        options: [`60%`, `70%`, `75%`, `80%`],
+        correctIndex: 2,
+        explanation: `Rumus Efisiensi: η = (P_keluaran / P_masukan) × 100% = (375 / 500) × 100% = 0,75 × 100% = 75%.`
+      },
+      {
+        id: 14,
+        topic: `Efisiensi Daya`,
+        diagramType: `efisiensi_lift`,
+        diagramTitle: `Efisiensi Motor Lift Pengangkat Beban`,
+        diagramCaption: `Daya keluaran mekanik lift dihitung dari P_out = m·g·h / t.`,
+        text: `Sebuah lift bermassa total 400 kg naik setinggi 15 m dalam waktu 20 s (g = 10 m/s²). Jika daya listrik masukan motor adalah 4.000 W, berapakah efisiensi motor lift tersebut?`,
+        options: [`50%`, `65%`, `75%`, `85%`],
+        correctIndex: 2,
+        explanation: `W_out = m·g·h = 400 × 10 × 15 = 60.000 J. P_out = W_out / t = 60.000 / 20 = 3.000 W. Efisiensi η = (3.000 / 4.000) × 100% = 75%.`
+      }
+    ];
+
+    // =========================================================================
+    // 2. SHARED APPLICATION STATE & REAL-TIME SYNC ENGINE
+    // =========================================================================
+    let appState = createInitialState();
+    let localSession = {
+      currentStudentName: null,
+      activeTab: `lobby`,
+      currentQuestionIdx: 0,
+      operatorUnlocked: false
+    };
+    let squadChart = null;
+    let topicChart = null;
+    let broadcastChannel = null;
+    let lastViolationTimestamp = 0;
+
+    function createInitialState() {
+      const students = {};
+      STUDENT_NAMES.forEach(function (name) {
+        students[name] = {
+          name: name,
+          squadId: null,
+          answers: {},
+          violations: 0,
+          joinedAt: null
+        };
+      });
+      return {
+        version: 1,
+        gameStatus: `waiting`, // 'waiting' | 'active' | 'finished'
+        students: students,
+        logs: [],
+        updatedAt: Date.now()
+      };
+    }
+
+    function initSyncChannel() {
+      try {
+        if (typeof BroadcastChannel !== `undefined`) {
+          broadcastChannel = new BroadcastChannel(`fisika_xi_usaha_energi_sync_v1`);
+          broadcastChannel.onmessage = function (event) {
+            if (event && event.data && event.data.type === `STATE_SYNC` && event.data.payload) {
+              const incoming = event.data.payload;
+              if (incoming.updatedAt && incoming.updatedAt >= (appState.updatedAt || 0)) {
+                appState = normalizeState(incoming);
+                renderAll();
+              }
+            }
+          };
+        }
+      } catch (err) {
+        // BroadcastChannel restricted in sandbox, fallback cleanly to notebookAppApi
+      }
+    }
+
+    function normalizeState(raw) {
+      const base = createInitialState();
+      if (!raw || typeof raw !== `object`) return base;
+      base.gameStatus = [`waiting`, `active`, `finished`].indexOf(raw.gameStatus) !== -1 ? raw.gameStatus : `waiting`;
+      base.updatedAt = raw.updatedAt || Date.now();
+      base.logs = Array.isArray(raw.logs) ? raw.logs.slice(0, 60) : [];
+      if (raw.students && typeof raw.students === `object`) {
+        STUDENT_NAMES.forEach(function (name) {
+          if (raw.students[name]) {
+            base.students[name] = {
+              name: name,
+              squadId: raw.students[name].squadId || null,
+              answers: raw.students[name].answers || {},
+              violations: Number(raw.students[name].violations) || 0,
+              joinedAt: raw.students[name].joinedAt || null
+            };
+          }
+        });
+      }
+      return base;
+    }
+
+    async function persistState(shouldBroadcast) {
+      appState.updatedAt = Date.now();
+      if (shouldBroadcast && broadcastChannel) {
+        try {
+          broadcastChannel.postMessage({ type: `STATE_SYNC`, payload: appState });
+        } catch (err) {}
+      }
+      if (window.notebookAppApi && typeof window.notebookAppApi.setAppState === `function`) {
+        try {
+          await window.notebookAppApi.setAppState({
+            sharedRoom: appState,
+            lastLocalStudent: localSession.currentStudentName
+          });
+        } catch (err) {}
+      }
+    }
+
+    // =========================================================================
+    // 3. RANDOMIZER 7 REGU & PENALTI TAB-SWITCH (PAGE VISIBILITY API)
+    // =========================================================================
+    function getBalancedRandomSquadId() {
+      const counts = {};
+      SQUADS.forEach(function (sq) { counts[sq.id] = 0; });
+      STUDENT_NAMES.forEach(function (name) {
+        const sid = appState.students[name].squadId;
+        if (sid && counts[sid] !== undefined) counts[sid] += 1;
+      });
+      let minCount = Infinity;
+      SQUADS.forEach(function (sq) {
+        if (counts[sq.id] < minCount) minCount = counts[sq.id];
+      });
+      const candidates = SQUADS.filter(function (sq) {
+        return counts[sq.id] === minCount;
+      });
+      const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+      return chosen.id;
+    }
+
+    function addLogEntry(studentName, squadId, eventText, deltaPoints) {
+      const now = new Date();
+      const hh = String(now.getHours()).padStart(2, `0`);
+      const mm = String(now.getMinutes()).padStart(2, `0`);
+      const ss = String(now.getSeconds()).padStart(2, `0`);
+      appState.logs.unshift({
+        time: `${hh}:${mm}:${ss}`,
+        studentName: studentName,
+        squadId: squadId,
+        eventText: eventText,
+        deltaPoints: deltaPoints
+      });
+      if (appState.logs.length > 60) appState.logs = appState.logs.slice(0, 60);
+    }
+
+    async function selectStudent(name) {
+      const student = appState.students[name];
+      if (!student) return;
+
+      if (!student.squadId) {
+        const newSquadId = getBalancedRandomSquadId();
+        student.squadId = newSquadId;
+        student.joinedAt = Date.now();
+        const sq = getSquadById(newSquadId);
+        addLogEntry(name, newSquadId, `Masuk otomatis ke ${sq.name}`, 0);
+      }
+
+      localSession.currentStudentName = name;
+      await persistState(true);
+      renderAll();
+    }
+
+    async function clearCurrentDevicePlayer() {
+      localSession.currentStudentName = null;
+      await persistState(false);
+      renderAll();
+    }
+
+    function getSquadById(id) {
+      for (let i = 0; i < SQUADS.length; i++) {
+        if (SQUADS[i].id === id) return SQUADS[i];
+      }
+      return SQUADS[0];
+    }
+
+    function computeSquadStats() {
+      const stats = {};
+      SQUADS.forEach(function (sq) {
+        stats[sq.id] = {
+          squad: sq,
+          members: [],
+          correctCount: 0,
+          answeredCount: 0,
+          violations: 0,
+          totalScore: 0
+        };
+      });
+
+      STUDENT_NAMES.forEach(function (name) {
+        const st = appState.students[name];
+        if (!st.squadId || !stats[st.squadId]) return;
+        const stAnswers = st.answers || {};
+        let stCorrect = 0;
+        let stAnswered = 0;
+        QUESTIONS.forEach(function (q) {
+          if (stAnswers[q.id] !== undefined) {
+            stAnswered += 1;
+            if (stAnswers[q.id] === q.correctIndex) stCorrect += 1;
+          }
+        });
+        const stNet = (stCorrect * 10) - (st.violations * 5);
+        stats[st.squadId].members.push({
+          name: name,
+          answered: stAnswered,
+          correct: stCorrect,
+          violations: st.violations,
+          netScore: stNet
+        });
+        stats[st.squadId].correctCount += stCorrect;
+        stats[st.squadId].answeredCount += stAnswered;
+        stats[st.squadId].violations += st.violations;
+        stats[st.squadId].totalScore += stNet;
+      });
+
+      return SQUADS.map(function (sq) { return stats[sq.id]; });
+    }
+
+    // Page Visibility API Sensor
+    document.addEventListener(`visibilitychange`, function () {
+      if (document.visibilityState === `hidden` || document.hidden) {
+        triggerTabSwitchPenalty(false);
+      }
+    });
+
+    async function triggerTabSwitchPenalty(isDemo) {
+      if (!isDemo) {
+        if (appState.gameStatus !== `active`) return;
+        if (!localSession.currentStudentName) return;
+        if (localSession.operatorUnlocked) return;
+      }
+
+      const targetName = isDemo
+        ? (localSession.currentStudentName || findFirstAssignedStudent())
+        : localSession.currentStudentName;
+
+      if (!targetName) return;
+      const nowMs = Date.now();
+      if (!isDemo && nowMs - lastViolationTimestamp < 2500) return;
+      lastViolationTimestamp = nowMs;
+
+      const student = appState.students[targetName];
+      if (!student || !student.squadId) return;
+
+      student.violations += 1;
+      addLogEntry(
+        student.name,
+        student.squadId,
+        isDemo ? `Simulasi Pelanggaran Tab-Switch` : `Pindah Tab / Keluar Halaman (Page Visibility API)`,
+        -5
+      );
+
+      await persistState(true);
+      showPenaltyBanner(student.name, getSquadById(student.squadId).name, student.violations);
+      renderAll();
+    }
+
+    function findFirstAssignedStudent() {
+      for (let i = 0; i < STUDENT_NAMES.length; i++) {
+        if (appState.students[STUDENT_NAMES[i]].squadId) return STUDENT_NAMES[i];
+      }
+      return null;
+    }
+
+    function showPenaltyBanner(studentName, squadName, totalViolations) {
+      const banner = document.getElementById(`live-alert-banner`);
+      if (!banner) return;
+      banner.className = `alert-banner alert-banner--error`;
+      banner.innerHTML = `
+        <div>
+          <strong>PERINGATAN TAB-SWITCH TERDETEKSI!</strong> Siswa <strong>${escapeHtml(studentName)}</strong> (${escapeHtml(squadName)}) terdeteksi berpindah tab / meninggalkan halaman. Skor regu otomatis dikurangi <strong>&minus;5 poin</strong> (Total pelanggaran siswa: ${totalViolations}x).
+        </div>
+        <span class="badge badge--err">&minus;5 Poin Penalti</span>
+      `;
+    }
+
+    // =========================================================================
+    // 4. KUIS, JAWABAN & DIAGRAM SVG FISIKA
+    // =========================================================================
+    async function answerQuestion(qId, optionIdx) {
+      if (appState.gameStatus !== `active`) return;
+      const name = localSession.currentStudentName;
+      if (!name || !appState.students[name]) return;
+
+      const student = appState.students[name];
+      if (student.answers[qId] !== undefined) return; // already answered
+
+      const q = QUESTIONS.find(function (item) { return item.id === qId; });
+      if (!q) return;
+
+      student.answers[qId] = optionIdx;
+      const isRight = optionIdx === q.correctIndex;
+      addLogEntry(
+        name,
+        student.squadId,
+        isRight ? `Menjawab benar Soal #${qId} (${q.topic})` : `Menjawab Soal #${qId} (${q.topic})`,
+        isRight ? 10 : 0
+      );
+
+      await persistState(true);
+      renderAll();
+    }
+
+    function selectQuestion(idx) {
+      if (idx < 0 || idx >= QUESTIONS.length) return;
+      localSession.currentQuestionIdx = idx;
+      renderArena();
+    }
+
+    function prevQuestion() {
+      const nextIdx = localSession.currentQuestionIdx > 0
+        ? localSession.currentQuestionIdx - 1
+        : QUESTIONS.length - 1;
+      selectQuestion(nextIdx);
+    }
+
+    function nextQuestion() {
+      const nextIdx = (localSession.currentQuestionIdx + 1) % QUESTIONS.length;
+      selectQuestion(nextIdx);
+    }
+
+    function buildPhysicsDiagramSVG(type) {
+      // Pure CSS-token SVG colors so zero inline hex/rgb appear in body!
+      const cInk = `var(--on-surface)`;
+      const cBlue = `var(--tertiary)`;
+      const cRed = `var(--secondary)`;
+      const cYellow = `var(--primary-container)`;
+      const cMuted = `var(--outline-variant)`;
+      const cFill = `var(--surface-container)`;
+
+      if (type === `usaha_sudut`) {
+        return `<svg viewBox="0 0 420 210" role="img" aria-label="Diagram balok ditarik gaya bersudut">
+          <line x1="20" y1="165" x2="400" y2="165" stroke="${cInk}" stroke-width="4"/>
+          <rect x="65" y="105" width="80" height="60" fill="${cYellow}" stroke="${cInk}" stroke-width="3"/>
+          <text x="105" y="142" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="18" fill="${cInk}">m</text>
+          <line x1="145" y1="125" x2="310" y2="125" stroke="${cInk}" stroke-width="2" stroke-dasharray="6 5"/>
+          <line x1="145" y1="125" x2="255" y2="45" stroke="${cBlue}" stroke-width="5"/>
+          <polygon points="262,40 245,42 254,56" fill="${cBlue}"/>
+          <path d="M 195 125 A 50 50 0 0 0 183 96" fill="none" stroke="${cRed}" stroke-width="3"/>
+          <text x="206" y="110" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${cInk}">&theta; = 60&deg;</text>
+          <text x="225" y="42" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="18" fill="${cBlue}">F = 40 N</text>
+          <line x1="105" y1="185" x2="325" y2="185" stroke="${cInk}" stroke-width="3"/>
+          <polygon points="335,185 320,178 320,192" fill="${cInk}"/>
+          <text x="220" y="203" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${cInk}">Perpindahan s = 5 m</text>
+        </svg>`;
+      }
+      if (type === `usaha_tegaklurus`) {
+        return `<svg viewBox="0 0 420 210" role="img" aria-label="Diagram gaya tegak lurus perpindahan">
+          <line x1="20" y1="170" x2="400" y2="170" stroke="${cInk}" stroke-width="4"/>
+          <rect x="85" y="100" width="70" height="52" fill="${cYellow}" stroke="${cInk}" stroke-width="3"/>
+          <text x="120" y="132" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${cInk}">Tas</text>
+          <line x1="120" y1="100" x2="120" y2="32" stroke="${cBlue}" stroke-width="5"/>
+          <polygon points="120,22 112,38 128,38" fill="${cBlue}"/>
+          <text x="135" y="44" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="17" fill="${cBlue}">F (ke atas)</text>
+          <line x1="155" y1="126" x2="345" y2="126" stroke="${cRed}" stroke-width="5"/>
+          <polygon points="355,126 338,118 338,134" fill="${cRed}"/>
+          <rect x="120" y="106" width="20" height="20" fill="none" stroke="${cInk}" stroke-width="2.5"/>
+          <text x="150" y="102" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="${cInk}">&theta; = 90&deg;</text>
+          <text x="260" y="150" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="17" fill="${cInk}">s = 12 m (mendatar)</text>
+        </svg>`;
+      }
+      if (type === `pegas_tarik` || type === `grafik_pegas`) {
+        return `<svg viewBox="0 0 420 210" role="img" aria-label="Diagram pegas dan grafik F terhadap delta x">
+          <rect x="18" y="25" width="14" height="75" fill="${cInk}"/>
+          <polyline points="32,62 50,45 64,80 78,45 92,80 106,45 120,62" fill="none" stroke="${cInk}" stroke-width="3.5"/>
+          <rect x="120" y="38" width="52" height="48" fill="${cYellow}" stroke="${cInk}" stroke-width="3"/>
+          <line x1="172" y1="62" x2="215" y2="62" stroke="${cBlue}" stroke-width="4"/>
+          <polygon points="224,62 210,55 210,69" fill="${cBlue}"/>
+          <text x="195" y="48" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="${cBlue}">F</text>
+          <text x="95" y="106" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cInk}">&Delta;x</text>
+          <line x1="255" y1="175" x2="395" y2="175" stroke="${cInk}" stroke-width="3"/>
+          <line x1="255" y1="175" x2="255" y2="25" stroke="${cInk}" stroke-width="3"/>
+          <polygon points="255,175 370,175 370,50" fill="${cYellow}" stroke="${cRed}" stroke-width="3"/>
+          <text x="330" y="142" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cInk}">Luas = Ep</text>
+          <text x="245" y="32" text-anchor="end" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cInk}">F</text>
+          <text x="372" y="195" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cInk}">&Delta;x</text>
+        </svg>`;
+      }
+      if (type === `kinetik_laju` || type === `teorema_ek`) {
+        return `<svg viewBox="0 0 420 210" role="img" aria-label="Diagram energi kinetik benda bergerak">
+          <line x1="20" y1="160" x2="400" y2="160" stroke="${cInk}" stroke-width="4"/>
+          <rect x="45" y="105" width="76" height="55" fill="${cFill}" stroke="${cInk}" stroke-width="3"/>
+          <text x="83" y="138" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${cInk}">v&#8321;</text>
+          <line x1="126" y1="132" x2="175" y2="132" stroke="${cBlue}" stroke-width="4"/>
+          <polygon points="184,132 170,125 170,139" fill="${cBlue}"/>
+          <rect x="245" y="105" width="76" height="55" fill="${cYellow}" stroke="${cInk}" stroke-width="3"/>
+          <text x="283" y="138" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${cInk}">v&#8322;</text>
+          <line x1="326" y1="132" x2="390" y2="132" stroke="${cRed}" stroke-width="5"/>
+          <polygon points="400,132 384,124 384,140" fill="${cRed}"/>
+          <text x="210" y="55" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="20" fill="${cInk}">W_total = &Delta;Ek = &frac12; m (v&#8322;&sup2; &minus; v&#8321;&sup2;)</text>
+        </svg>`;
+      }
+      if (type === `potensial_tinggi` || type === `usaha_gravitasi`) {
+        return `<svg viewBox="0 0 420 210" role="img" aria-label="Diagram ketinggian energi potensial gravitasi">
+          <line x1="35" y1="180" x2="385" y2="180" stroke="${cInk}" stroke-width="4"/>
+          <text x="380" y="198" text-anchor="end" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cInk}">Tanah (h = 0)</text>
+          <line x1="90" y1="45" x2="90" y2="180" stroke="${cBlue}" stroke-width="3" stroke-dasharray="6 4"/>
+          <rect x="130" y="30" width="60" height="45" fill="${cYellow}" stroke="${cInk}" stroke-width="3"/>
+          <text x="160" y="58" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${cInk}">m (h&#8321;)</text>
+          <line x1="160" y1="75" x2="160" y2="115" stroke="${cRed}" stroke-width="4"/>
+          <polygon points="160,124 152,110 168,110" fill="${cRed}"/>
+          <rect x="255" y="110" width="60" height="45" fill="${cFill}" stroke="${cInk}" stroke-width="3"/>
+          <text x="285" y="138" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${cInk}">h&#8322;</text>
+          <text x="78" y="115" text-anchor="end" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${cBlue}">h</text>
+        </svg>`;
+      }
+      if (type === `mekanik_lengkung` || type === `mekanik_jatuh`) {
+        return `<svg viewBox="0 0 420 210" role="img" aria-label="Diagram kekekalan energi mekanik di lintasan lengkung">
+          <line x1="25" y1="175" x2="395" y2="175" stroke="${cInk}" stroke-width="4"/>
+          <path d="M 55 40 Q 120 175 280 175 L 370 175" fill="none" stroke="${cInk}" stroke-width="5"/>
+          <circle cx="62" cy="44" r="16" fill="${cYellow}" stroke="${cInk}" stroke-width="3"/>
+          <text x="95" y="48" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="${cInk}">Puncak: Ep maks, v&#8321; = 0</text>
+          <circle cx="290" cy="159" r="16" fill="${cBlue}" stroke="${cInk}" stroke-width="3"/>
+          <line x1="308" y1="159" x2="365" y2="159" stroke="${cRed}" stroke-width="4"/>
+          <polygon points="374,159 360,152 360,166" fill="${cRed}"/>
+          <text x="290" y="128" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="${cBlue}">Dasar: Ek maks (h = 0)</text>
+        </svg>`;
+      }
+      // Daya & Efisiensi
+      return `<svg viewBox="0 0 420 210" role="img" aria-label="Diagram daya dan efisiensi mesin">
+        <rect x="25" y="70" width="105" height="68" fill="${cFill}" stroke="${cInk}" stroke-width="3"/>
+        <text x="77" y="100" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cInk}">P masukan</text>
+        <text x="77" y="122" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cBlue}">(Input)</text>
+        <line x1="130" y1="104" x2="165" y2="104" stroke="${cInk}" stroke-width="4"/>
+        <polygon points="174,104 160,97 160,111" fill="${cInk}"/>
+        <rect x="174" y="55" width="100" height="95" fill="${cYellow}" stroke="${cInk}" stroke-width="3"/>
+        <text x="224" y="98" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="18" fill="${cInk}">MESIN</text>
+        <text x="224" y="124" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="${cInk}">&eta; (%)</text>
+        <line x1="274" y1="104" x2="310" y2="104" stroke="${cBlue}" stroke-width="4"/>
+        <polygon points="318,104 305,97 305,111" fill="${cBlue}"/>
+        <rect x="318" y="70" width="85" height="68" fill="${cFill}" stroke="${cInk}" stroke-width="3"/>
+        <text x="360" y="100" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cInk}">P keluar</text>
+        <text x="360" y="122" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cBlue}">(Berguna)</text>
+        <line x1="224" y1="150" x2="224" y2="182" stroke="${cRed}" stroke-width="3"/>
+        <text x="224" y="200" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="13" fill="${cInk}">Rugi energi (panas/gesek)</text>
+      </svg>`;
+    }
+
+    // =========================================================================
+    // 5. LABORATORIUM VEKTOR USAHA (DUAL-INPUT SYNC)
+    // =========================================================================
+    function syncLabForceFromSlider(val) {
+      const el = document.getElementById(`lab-force-num`);
+      if (el) el.value = val;
+      updateLabDiagram();
+    }
+    function syncLabForceFromNumber(val) {
+      const el = document.getElementById(`lab-force-range`);
+      if (el) el.value = clampNum(val, 10, 100);
+      updateLabDiagram();
+    }
+    function syncLabDistFromSlider(val) {
+      const el = document.getElementById(`lab-dist-num`);
+      if (el) el.value = val;
+      updateLabDiagram();
+    }
+    function syncLabDistFromNumber(val) {
+      const el = document.getElementById(`lab-dist-range`);
+      if (el) el.value = clampNum(val, 1, 20);
+      updateLabDiagram();
+    }
+    function syncLabAngleFromSlider(val) {
+      const el = document.getElementById(`lab-angle-num`);
+      if (el) el.value = val;
+      updateLabDiagram();
+    }
+    function syncLabAngleFromNumber(val) {
+      const el = document.getElementById(`lab-angle-range`);
+      if (el) el.value = clampNum(val, 0, 90);
+      updateLabDiagram();
+    }
+    function clampNum(v, min, max) {
+      const n = Number(v);
+      if (isNaN(n)) return min;
+      return Math.max(min, Math.min(max, n));
+    }
+
+    function updateLabDiagram() {
+      const fEl = document.getElementById(`lab-force-range`);
+      const sEl = document.getElementById(`lab-dist-range`);
+      const aEl = document.getElementById(`lab-angle-range`);
+      const outEl = document.getElementById(`lab-work-output`);
+      const noteEl = document.getElementById(`lab-work-note`);
+      const svgBox = document.getElementById(`lab-svg-box`);
+      if (!fEl || !sEl || !aEl || !outEl || !noteEl || !svgBox) return;
+
+      const F = Number(fEl.value);
+      const s = Number(sEl.value);
+      const deg = Number(aEl.value);
+      const rad = (deg * Math.PI) / 180;
+      const W = F * s * Math.cos(rad);
+      const wRounded = Math.abs(W) < 0.05 ? 0 : W;
+
+      outEl.textContent = `${wRounded.toFixed(1).replace(`.`, `,`)} J`;
+      if (deg === 90) {
+        noteEl.textContent = `θ = 90° (tegak lurus perpindahan) → cos 90° = 0, sehingga Usaha W = 0 J!`;
+      } else if (deg === 0) {
+        noteEl.textContent = `θ = 0° (searah penuh dengan perpindahan) → usaha bernilai maksimum.`;
+      } else {
+        noteEl.textContent = `W = ${F} × ${s} × cos(${deg}°) = ${wRounded.toFixed(1).replace(`.`, `,`)} Joule.`;
+      }
+
+      const vecLen = 60 + F * 0.7;
+      const x1 = 135;
+      const y1 = 130;
+      const x2 = x1 + vecLen * Math.cos(rad);
+      const y2 = y1 - vecLen * Math.sin(rad);
+      const cInk = `var(--on-surface)`;
+      const cBlue = `var(--tertiary)`;
+      const cRed = `var(--secondary)`;
+      const cYellow = `var(--primary-container)`;
+
+      svgBox.innerHTML = `<svg viewBox="0 0 400 200" role="img" aria-label="Simulator vektor usaha">
+        <line x1="20" y1="162" x2="380" y2="162" stroke="${cInk}" stroke-width="4"/>
+        <rect x="65" y="106" width="70" height="56" fill="${cYellow}" stroke="${cInk}" stroke-width="3"/>
+        <text x="100" y="140" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="16" fill="${cInk}">Benda</text>
+        <line x1="135" y1="130" x2="335" y2="130" stroke="${cInk}" stroke-width="2" stroke-dasharray="5 5"/>
+        <line x1="${x1}" y1="${y1}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="${cBlue}" stroke-width="5"/>
+        <circle cx="${x2.toFixed(1)}" cy="${y2.toFixed(1)}" r="5" fill="${cBlue}"/>
+        <text x="${(x2 + 8).toFixed(1)}" y="${Math.max(24, y2 - 6).toFixed(1)}" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="${cBlue}">F = ${F} N (&theta;=${deg}&deg;)</text>
+        <line x1="100" y1="180" x2="${140 + s * 10}" y2="180" stroke="${cRed}" stroke-width="4"/>
+        <text x="100" y="196" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="${cInk}">s = ${s} m</text>
+      </svg>`;
+    }
+
+    // =========================================================================
+    // 6. MODE OPERATOR GURU (KODE AKSES: FISIKAXI)
+    // =========================================================================
+    function unlockOperator() {
+      const inputEl = document.getElementById(`operator-code-input`);
+      const errEl = document.getElementById(`operator-auth-error`);
+      if (!inputEl || !errEl) return;
+
+      const entered = (inputEl.value || ``).trim();
+      if (entered === `FISIKAXI`) {
+        localSession.operatorUnlocked = true;
+        errEl.classList.add(`is-hidden`);
+        inputEl.value = ``;
+        renderOperatorView();
+      } else {
+        errEl.textContent = `Kode akses salah. Masukkan kode akses "FISIKAXI" untuk membuka kontrol operator dan pembahasan soal.`;
+        errEl.classList.remove(`is-hidden`);
+      }
+    }
+
+    function lockOperator() {
+      localSession.operatorUnlocked = false;
+      renderOperatorView();
+    }
+
+    async function setGameStatus(status) {
+      if (!localSession.operatorUnlocked) return;
+      appState.gameStatus = status;
+      const msgMap = {
+        active: `Permainan DIMULAI oleh Operator Guru. Siswa dapat mengerjakan soal dan sensor Tab-Switch aktif.`,
+        waiting: `Permainan dijeda ke status Menunggu Operator.`,
+        finished: `Permainan DIAKHIRI oleh Operator Guru. Silakan tinjau papan skor & pembahasan!`
+      };
+      addLogEntry(`OPERATOR GURU`, 0, msgMap[status] || `Status diubah`, 0);
+      await persistState(true);
+      const msgEl = document.getElementById(`operator-action-msg`);
+      if (msgEl) msgEl.textContent = msgMap[status] || ``;
+      renderAll();
+    }
+
+    async function autoAssignRemainingStudents() {
+      if (!localSession.operatorUnlocked) return;
+      let count = 0;
+      STUDENT_NAMES.forEach(function (name) {
+        if (!appState.students[name].squadId) {
+          appState.students[name].squadId = getBalancedRandomSquadId();
+          appState.students[name].joinedAt = Date.now();
+          count += 1;
+        }
+      });
+      if (count > 0) {
+        addLogEntry(`OPERATOR GURU`, 0, `Acak otomatis ${count} siswa tersisa ke 7 regu`, 0);
+        await persistState(true);
+      }
+      const msgEl = document.getElementById(`operator-action-msg`);
+      if (msgEl) msgEl.textContent = count > 0
+        ? `${count} siswa berhasil dibagikan secara acak ke 7 regu.`
+        : `Seluruh 34 siswa sudah tergabung ke regu.`;
+      renderAll();
+    }
+
+    async function simulateTabSwitchDemo() {
+      if (!localSession.operatorUnlocked) return;
+      const target = localSession.currentStudentName || findFirstAssignedStudent();
+      if (!target) {
+        const msgEl = document.getElementById(`operator-action-msg`);
+        if (msgEl) msgEl.textContent = `Belum ada siswa di regu untuk disimulasikan. Pilih 1 nama siswa atau klik "Acak Otomatis Sisa Siswa" terlebih dahulu.`;
+        return;
+      }
+      await triggerTabSwitchPenalty(true);
+    }
+
+    async function resetStudentEntry(name) {
+      if (!localSession.operatorUnlocked) return;
+      if (!appState.students[name]) return;
+      appState.students[name] = {
+        name: name,
+        squadId: null,
+        answers: {},
+        violations: 0,
+        joinedAt: null
+      };
+      if (localSession.currentStudentName === name) {
+        localSession.currentStudentName = null;
+      }
+      addLogEntry(`OPERATOR GURU`, 0, `Mereset status siswa ${name}`, 0);
+      await persistState(true);
+      renderAll();
+    }
+
+    async function resetAllGameData(btn) {
+      if (!localSession.operatorUnlocked) return;
+      if (btn.dataset.armed !== `true`) {
+        btn.dataset.armed = `true`;
+        btn.textContent = `Klik Sekali Lagi untuk Konfirmasi Reset`;
+        return;
+      }
+      btn.dataset.armed = `false`;
+      btn.textContent = `Reset Seluruh Sesi`;
+      appState = createInitialState();
+      localSession.currentStudentName = null;
+      localSession.currentQuestionIdx = 0;
+      await persistState(true);
+      const msgEl = document.getElementById(`operator-action-msg`);
+      if (msgEl) msgEl.textContent = `Seluruh data regu, skor, dan pelanggaran telah direset ke awal.`;
+      renderAll();
+    }
+
+    // =========================================================================
+    // 7. MANUAL CROSS-DEVICE SYNC EXPORT / IMPORT & CSV DOWNLOAD
+    // =========================================================================
+    function exportSyncCode() {
+      const box = document.getElementById(`sync-payload-box`);
+      const msg = document.getElementById(`sync-feedback-msg`);
+      if (!box) return;
+      box.value = JSON.stringify(appState);
+      if (msg) msg.textContent = `Kode sinkronisasi berhasil dibuat (${box.value.length} karakter). Bagikan ke perangkat lain.`;
+    }
+
+    async function copySyncCode() {
+      const box = document.getElementById(`sync-payload-box`);
+      const msg = document.getElementById(`sync-feedback-msg`);
+      if (!box) return;
+      if (!box.value) exportSyncCode();
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(box.value);
+          if (msg) msg.textContent = `Kode sinkronisasi disalin ke papan klip!`;
+          return;
+        }
+      } catch (err) {}
+      box.select();
+      if (msg) msg.textContent = `Silakan tekan Ctrl+C / Salin pada kotak teks di atas.`;
+    }
+
+    async function importSyncCode() {
+      const box = document.getElementById(`sync-payload-box`);
+      const msg = document.getElementById(`sync-feedback-msg`);
+      if (!box || !msg) return;
+      try {
+        const parsed = JSON.parse((box.value || ``).trim());
+        if (!parsed || !parsed.students) {
+          msg.textContent = `Format kode sinkronisasi tidak valid.`;
+          return;
+        }
+        // Merge intelligently: keep assigned squads & union of answers/max violations
+        const incoming = normalizeState(parsed);
+        STUDENT_NAMES.forEach(function (name) {
+          const cur = appState.students[name];
+          const inc = incoming.students[name];
+          if (!cur.squadId && inc.squadId) {
+            cur.squadId = inc.squadId;
+            cur.joinedAt = inc.joinedAt;
+          }
+          Object.keys(inc.answers || {}).forEach(function (qId) {
+            if (cur.answers[qId] === undefined) cur.answers[qId] = inc.answers[qId];
+          });
+          cur.violations = Math.max(cur.violations, inc.violations);
+        });
+        if (incoming.gameStatus === `active` || incoming.gameStatus === `finished`) {
+          appState.gameStatus = incoming.gameStatus;
+        }
+        appState.logs = (incoming.logs || []).concat(appState.logs).slice(0, 60);
+        await persistState(true);
+        msg.textContent = `Data sesi berhasil digabungkan dan disinkronkan!`;
+        renderAll();
+      } catch (err) {
+        msg.textContent = `Gagal membaca JSON kode sesi. Pastikan seluruh kode tersalin utuh.`;
+      }
+    }
+
+    function downloadResultsCSV() {
+      const rows = [`Nama,Regu,Terjawab,Benar,Pelanggaran_TabSwitch,Net_Poin`];
+      STUDENT_NAMES.forEach(function (name) {
+        const st = appState.students[name];
+        let ans = 0;
+        let cor = 0;
+        QUESTIONS.forEach(function (q) {
+          if (st.answers[q.id] !== undefined) {
+            ans += 1;
+            if (st.answers[q.id] === q.correctIndex) cor += 1;
+          }
+        });
+        const sqName = st.squadId ? getSquadById(st.squadId).name : `Belum Masuk`;
+        const net = (cor * 10) - (st.violations * 5);
+        rows.push(`"${name}","${sqName}",${ans},${cor},${st.violations},${net}`);
+      });
+      if (window.notebookAppApi && typeof window.notebookAppApi.triggerFileDownload === `function`) {
+        window.notebookAppApi.triggerFileDownload({
+          content: rows.join(`\n`),
+          contentType: `text/csv`,
+          encoding: `UTF-8`,
+          filename: `rekap_fisika_xi_usaha_energi.csv`
+        });
+      }
+    }
+
+    // =========================================================================
+    // 8. NAVIGATION & RENDER PIPELINE
+    // =========================================================================
+    function switchTab(tabName) {
+      localSession.activeTab = tabName;
+      const tabs = [`lobby`, `arena`, `scoreboard`, `sync`, `operator`];
+      tabs.forEach(function (t) {
+        const viewEl = document.getElementById(`view-${t}`);
+        const btnEl = document.getElementById(`tab-btn-${t}`);
+        if (viewEl) {
+          if (t === tabName) viewEl.classList.add(`is-active`);
+          else viewEl.classList.remove(`is-active`);
+        }
+        if (btnEl) {
+          if (t === tabName) btnEl.classList.add(`btn--active`);
+          else btnEl.classList.remove(`btn--active`);
+        }
+      });
+      if (tabName === `scoreboard`) renderCharts();
+    }
+
+    function renderAll() {
+      renderHeader();
+      renderRoster();
+      renderArena();
+      renderScoreboard();
+      renderOperatorView();
+      updateLabDiagram();
+    }
+
+    function renderHeader() {
+      const gsEl = document.getElementById(`hdr-game-status`);
+      const psEl = document.getElementById(`hdr-player-status`);
+      const regBadge = document.getElementById(`badge-registered-count`);
+
+      if (gsEl) {
+        if (appState.gameStatus === `active`) {
+          gsEl.innerHTML = `<span class="badge badge--ok">BERLANGSUNG (LIVE)</span>`;
+        } else if (appState.gameStatus === `finished`) {
+          gsEl.innerHTML = `<span class="badge badge--black">PERMAINAN SELESAI</span>`;
+        } else {
+          gsEl.innerHTML = `<span class="badge badge--yellow">MENUNGGU OPERATOR</span>`;
+        }
+      }
+
+      if (psEl) {
+        const curName = localSession.currentStudentName;
+        if (curName && appState.students[curName]) {
+          const st = appState.students[curName];
+          const sq = st.squadId ? getSquadById(st.squadId) : null;
+          psEl.innerHTML = `
+            <span class="badge badge--blue">${escapeHtml(curName)}</span>
+            <span style="font-size: 0.9rem;">${sq ? escapeHtml(sq.name) : `Tanpa Regu`}</span>
+          `;
+        } else {
+          psEl.innerHTML = `<span>Belum memilih nama siswa</span>`;
+        }
+      }
+
+      let assignedCount = 0;
+      STUDENT_NAMES.forEach(function (n) {
+        if (appState.students[n].squadId) assignedCount += 1;
+      });
+      if (regBadge) {
+        regBadge.textContent = `${assignedCount} / ${STUDENT_NAMES.length} Siswa Masuk`;
+      }
+    }
+
+    function renderRoster() {
+      const grid = document.getElementById(`roster-grid`);
+      const searchEl = document.getElementById(`roster-search`);
+      const filterEl = document.getElementById(`roster-filter`);
+      const myBox = document.getElementById(`my-assignment-box`);
+      const myTitle = document.getElementById(`my-assignment-title`);
+      const mySub = document.getElementById(`my-assignment-sub`);
+
+      if (myBox && myTitle && mySub) {
+        const curName = localSession.currentStudentName;
+        if (curName && appState.students[curName] && appState.students[curName].squadId) {
+          const sq = getSquadById(appState.students[curName].squadId);
+          myBox.classList.remove(`is-hidden`);
+          myTitle.textContent = `${curName} → ${sq.symbol} ${sq.name}`;
+          mySub.textContent = `Fokus Regu: ${sq.focus}. Status Game: ${appState.gameStatus === `active` ? `Sedang Berlangsung — Silakan masuk ke Arena Kuis!` : appState.gameStatus === `finished` ? `Permainan telah berakhir.` : `Menunggu Guru Operator menekan START.`}`;
+        } else {
+          myBox.classList.add(`is-hidden`);
+        }
+      }
+
+      if (!grid) return;
+      const query = (searchEl ? searchEl.value : ``).trim().toUpperCase();
+      const filterVal = filterEl ? filterEl.value : `all`;
+
+      const htmlParts = [];
+      STUDENT_NAMES.forEach(function (name) {
+        const st = appState.students[name];
+        const isAssigned = Boolean(st.squadId);
+        if (query && name.indexOf(query) === -1) return;
+        if (filterVal === `assigned` && !isAssigned) return;
+        if (filterVal === `unassigned` && isAssigned) return;
+
+        const isMe = localSession.currentStudentName === name;
+        const sq = isAssigned ? getSquadById(st.squadId) : null;
+        const cls = `student-btn${isAssigned ? ` is-assigned` : ``}${isMe ? ` is-me` : ``}`;
+        const meta = sq ? `${sq.symbol} ${sq.name}` : `Klik untuk Acak Regu`;
+        htmlParts.push(`
+          <button type="button" class="${cls}" onclick="selectStudent('${escapeAttr(name)}')">
+            <span class="student-name">${escapeHtml(name)}</span>
+            <span class="student-meta">${escapeHtml(meta)}</span>
+          </button>
+        `);
+      });
+
+      grid.innerHTML = htmlParts.length > 0
+        ? htmlParts.join(``)
+        : `<p style="grid-column: 1 / -1; color: var(--on-surface-variant);">Tidak ada nama siswa yang sesuai filter.</p>`;
+    }
+
+    function renderArena() {
+      const gateBox = document.getElementById(`arena-gate-msg`);
+      const gateDetail = document.getElementById(`arena-gate-detail`);
+      const playArea = document.getElementById(`arena-play-area`);
+      if (!gateBox || !gateDetail || !playArea) return;
+
+      const curName = localSession.currentStudentName;
+      const student = curName ? appState.students[curName] : null;
+      const canPlay = Boolean(student && student.squadId && appState.gameStatus === `active`);
+
+      if (!canPlay) {
+        gateBox.classList.remove(`is-hidden`);
+        playArea.classList.add(`is-hidden`);
+        if (!student || !student.squadId) {
+          gateDetail.innerHTML = `Silakan kembali ke tab <strong>1. Lobi &amp; Registrasi</strong> dan klik nama Anda untuk mendapatkan regu otomatis.`;
+        } else if (appState.gameStatus === `waiting`) {
+          gateDetail.innerHTML = `Anda terdaftar sebagai <strong>${escapeHtml(curName)}</strong> (${escapeHtml(getSquadById(student.squadId).name)}). Menunggu Operator Guru memulai permainan (Start).`;
+        } else {
+          gateDetail.innerHTML = `Permainan telah <strong>BERAKHIR</strong>. Silakan buka tab <strong>3. Papan Skor &amp; Grafik Live</strong> untuk melihat peringkat akhir 7 regu!`;
+        }
+        return;
+      }
+
+      gateBox.classList.add(`is-hidden`);
+      playArea.classList.remove(`is-hidden`);
+
+      const stats = computeSquadStats();
+      const mySquadStat = stats.find(function (s) { return s.squad.id === student.squadId; });
+      const sq = getSquadById(student.squadId);
+
+      const pNameEl = document.getElementById(`arena-player-name`);
+      const sNameEl = document.getElementById(`arena-squad-name`);
+      const sScoreEl = document.getElementById(`arena-squad-score`);
+      const progEl = document.getElementById(`arena-progress`);
+      const violEl = document.getElementById(`arena-violations`);
+
+      let answeredCount = 0;
+      QUESTIONS.forEach(function (q) {
+        if (student.answers[q.id] !== undefined) answeredCount += 1;
+      });
+
+      if (pNameEl) pNameEl.textContent = student.name;
+      if (sNameEl) sNameEl.textContent = `${sq.symbol} ${sq.name}`;
+      if (sScoreEl) sScoreEl.textContent = mySquadStat ? mySquadStat.totalScore : 0;
+      if (progEl) progEl.textContent = `${answeredCount} / ${QUESTIONS.length}`;
+      if (violEl) violEl.textContent = student.violations;
+
+      // Render Question Dots
+      const dotsEl = document.getElementById(`arena-q-dots`);
+      if (dotsEl) {
+        dotsEl.innerHTML = QUESTIONS.map(function (q, idx) {
+          const ans = student.answers[q.id];
+          let cls = `q-dot`;
+          if (idx === localSession.currentQuestionIdx) cls += ` is-current`;
+          else if (ans !== undefined) {
+            cls += ans === q.correctIndex ? ` is-done-ok` : ` is-done-err`;
+          }
+          return `<button type="button" class="${cls}" onclick="selectQuestion(${idx})">${q.id}</button>`;
+        }).join(``);
+      }
+
+      // Render Current Question
+      const q = QUESTIONS[localSession.currentQuestionIdx] || QUESTIONS[0];
+      const qTopicEl = document.getElementById(`arena-q-topic`);
+      const qNumEl = document.getElementById(`arena-q-number`);
+      const qTextEl = document.getElementById(`arena-q-text`);
+      const qOptsEl = document.getElementById(`arena-q-options`);
+      const qFbEl = document.getElementById(`arena-q-feedback`);
+      const dTitleEl = document.getElementById(`arena-diagram-title`);
+      const dFrameEl = document.getElementById(`arena-diagram-frame`);
+      const dCapEl = document.getElementById(`arena-diagram-caption`);
+
+      if (qTopicEl) qTopicEl.textContent = q.topic;
+      if (qNumEl) qNumEl.textContent = `Soal ${q.id} / ${QUESTIONS.length}`;
+      if (qTextEl) qTextEl.textContent = q.text;
+      if (dTitleEl) dTitleEl.textContent = q.diagramTitle;
+      if (dFrameEl) dFrameEl.innerHTML = buildPhysicsDiagramSVG(q.diagramType);
+      if (dCapEl) dCapEl.textContent = q.diagramCaption;
+
+      const userAns = student.answers[q.id];
+      const letters = [`A`, `B`, `C`, `D`];
+      if (qOptsEl) {
+        qOptsEl.innerHTML = q.options.map(function (optText, idx) {
+          let cls = `option-btn`;
+          if (userAns !== undefined) {
+            if (idx === q.correctIndex) cls += ` is-correct`;
+            else if (idx === userAns) cls += ` is-wrong`;
+          }
+          const disabledAttr = userAns !== undefined ? `disabled` : ``;
+          return `
+            <button type="button" class="${cls}" ${disabledAttr} onclick="answerQuestion(${q.id}, ${idx})">
+              <span class="option-key">${letters[idx]}</span>
+              <span>${escapeHtml(optText)}</span>
+            </button>
+          `;
+        }).join(``);
+      }
+
+      if (qFbEl) {
+        if (userAns === undefined) {
+          qFbEl.classList.add(`is-hidden`);
+        } else {
+          qFbEl.classList.remove(`is-hidden`);
+          if (userAns === q.correctIndex) {
+            qFbEl.className = `alert-banner alert-banner--ok`;
+            qFbEl.innerHTML = `<strong>Jawaban Benar!</strong> Regu Anda mendapatkan <strong>+10 poin</strong>. Pembahasan detail dapat ditinjau bersama guru setelah sesi selesai.`;
+          } else {
+            qFbEl.className = `alert-banner alert-banner--error`;
+            qFbEl.innerHTML = `<strong>Jawaban Kurang Tepat.</strong> Jawaban yang benar adalah opsi <strong>${letters[q.correctIndex]}</strong>. Pembahasan lengkap dikunci oleh Guru Operator.`;
+          }
+        }
+      }
+    }
+
+    function renderScoreboard() {
+      const stats = computeSquadStats();
+      const sorted = stats.slice().sort(function (a, b) {
+        return b.totalScore - a.totalScore;
+      });
+
+      let totalAnswers = 0;
+      let totalCorrect = 0;
+      let totalViolations = 0;
+      stats.forEach(function (s) {
+        totalAnswers += s.answeredCount;
+        totalCorrect += s.correctCount;
+        totalViolations += s.violations;
+      });
+
+      const topSquadEl = document.getElementById(`sb-top-squad`);
+      const topScoreEl = document.getElementById(`sb-top-score`);
+      const ansEl = document.getElementById(`sb-total-answers`);
+      const accEl = document.getElementById(`sb-accuracy`);
+      const penEl = document.getElementById(`sb-total-penalties`);
+
+      if (topSquadEl && topScoreEl) {
+        if (sorted.length > 0 && (sorted[0].members.length > 0)) {
+          topSquadEl.textContent = `${sorted[0].squad.symbol} ${sorted[0].squad.name}`;
+          topScoreEl.textContent = `${sorted[0].totalScore} poin (${sorted[0].members.length} anggota)`;
+        } else {
+          topSquadEl.textContent = `Belum Ada Skor`;
+          topScoreEl.textContent = `0 poin`;
+        }
+      }
+      if (ansEl) ansEl.textContent = totalAnswers;
+      if (accEl) accEl.textContent = totalAnswers > 0 ? `${Math.round((totalCorrect / totalAnswers) * 100)}%` : `0%`;
+      if (penEl) penEl.textContent = `${totalViolations}x (−${totalViolations * 5})`;
+
+      // Render 7 Squad Cards sorted by rank
+      const gridEl = document.getElementById(`squad-board-grid`);
+      if (gridEl) {
+        gridEl.innerHTML = sorted.map(function (s, rankIdx) {
+          const isLeader = rankIdx === 0 && s.totalScore > 0;
+          const membersHtml = s.members.length > 0
+            ? s.members.map(function (m) {
+                const violTag = m.violations > 0
+                  ? `<span class="badge badge--err">&minus;${m.violations * 5}</span>`
+                  : `<span class="badge badge--ok">Aman</span>`;
+                return `
+                  <li class="member-item">
+                    <span><strong>${escapeHtml(m.name)}</strong> (${m.answered}/${QUESTIONS.length})</span>
+                    <span style="display: inline-flex; gap: var(--space-xs); align-items: center;">
+                      ${violTag}
+                      <span class="badge badge--black tabular">${m.netScore} pt</span>
+                    </span>
+                  </li>
+                `;
+              }).join(``)
+            : `<li class="member-item" style="color: var(--on-surface-variant);">Belum ada siswa yang bergabung ke regu ini.</li>`;
+
+          return `
+            <div class="squad-wrap">
+              <article class="squad-card${isLeader ? ` squad-card--leader` : ``}">
+                <div class="squad-head">
+                  <div>
+                    <span class="badge badge--black">Peringkat #${rankIdx + 1}</span>
+                    <h4 style="margin-top: var(--space-xs); font-size: 1.2rem;">${escapeHtml(s.squad.symbol)} ${escapeHtml(s.squad.name)}</h4>
+                    <span style="font-size: 0.86rem; color: var(--on-surface-variant);">${escapeHtml(s.squad.focus)} &middot; ${s.members.length} Anggota</span>
+                  </div>
+                  <div class="squad-score">${s.totalScore}</div>
+                </div>
+                <ul class="member-list">${membersHtml}</ul>
+              </article>
+            </div>
+          `;
+        }).join(``);
+      }
+
+      // Render Logs Table
+      const tbody = document.getElementById(`live-log-tbody`);
+      if (tbody) {
+        if (appState.logs.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="5" style="color: var(--on-surface-variant);">Belum ada aktivitas permainan.</td></tr>`;
+        } else {
+          tbody.innerHTML = appState.logs.slice(0, 20).map(function (log) {
+            const sqLabel = log.squadId ? getSquadById(log.squadId).name : `Kontrol Guru`;
+            const deltaText = log.deltaPoints > 0 ? `+${log.deltaPoints}` : log.deltaPoints < 0 ? `${log.deltaPoints}` : `0`;
+            const badgeCls = log.deltaPoints > 0 ? `badge--ok` : log.deltaPoints < 0 ? `badge--err` : `badge`;
+            return `
+              <tr>
+                <td class="tabular">${escapeHtml(log.time)}</td>
+                <td><strong>${escapeHtml(log.studentName)}</strong></td>
+                <td>${escapeHtml(sqLabel)}</td>
+                <td>${escapeHtml(log.eventText)}</td>
+                <td class="num"><span class="badge ${badgeCls} tabular">${deltaText}</span></td>
+              </tr>
+            `;
+          }).join(``);
+        }
+      }
+
+      if (localSession.activeTab === `scoreboard`) {
+        renderCharts();
+      }
+    }
+
+    function renderCharts() {
+      if (typeof Chart === `undefined`) return;
+      const styles = getComputedStyle(document.documentElement);
+      const colRed = styles.getPropertyValue(`--data-1`).trim();
+      const colBlue = styles.getPropertyValue(`--data-2`).trim();
+      const colBlack = styles.getPropertyValue(`--data-3`).trim();
+      const colOchre = styles.getPropertyValue(`--data-4`).trim();
+      const colGrid = styles.getPropertyValue(`--outline-variant`).trim();
+
+      const stats = computeSquadStats();
+      const labelsSquad = stats.map(function (s) { return `Regu ${s.squad.id}`; });
+      const dataSquad = stats.map(function (s) { return s.totalScore; });
+      const barColors = [colRed, colBlue, colBlack, colOchre, colRed, colBlue, colBlack];
+
+      const ctxSquad = document.getElementById(`chart-squads`);
+      if (ctxSquad) {
+        if (squadChart) squadChart.destroy();
+        squadChart = new Chart(ctxSquad, {
+          type: `bar`,
+          data: {
+            labels: labelsSquad,
+            datasets: [{
+              label: `Total Poin Regu`,
+              data: dataSquad,
+              backgroundColor: barColors,
+              borderColor: colBlack,
+              borderWidth: 2,
+              borderRadius: 0
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: { color: colGrid },
+                ticks: { color: colBlack, font: { weight: `700` } }
+              },
+              x: {
+                grid: { display: false },
+                ticks: { color: colBlack, font: { weight: `700` } }
+              }
+            }
+          }
+        });
+      }
+
+      // Topic accuracy chart
+      const topics = [`Usaha`, `Usaha Pegas`, `Energi Kinetik`, `Energi Potensial`, `Energi Mekanik`, `Daya`, `Efisiensi Daya`];
+      const topicRates = topics.map(function (topicName) {
+        let total = 0;
+        let ok = 0;
+        QUESTIONS.forEach(function (q) {
+          if (q.topic !== topicName) return;
+          STUDENT_NAMES.forEach(function (name) {
+            const ans = appState.students[name].answers[q.id];
+            if (ans !== undefined) {
+              total += 1;
+              if (ans === q.correctIndex) ok += 1;
+            }
+          });
+        });
+        return total > 0 ? Math.round((ok / total) * 100) : 0;
+      });
+
+      const ctxTopic = document.getElementById(`chart-topics`);
+      if (ctxTopic) {
+        if (topicChart) topicChart.destroy();
+        topicChart = new Chart(ctxTopic, {
+          type: `bar`,
+          data: {
+            labels: topics,
+            datasets: [{
+              label: `Akurasi (%)`,
+              data: topicRates,
+              backgroundColor: colBlue,
+              borderColor: colBlack,
+              borderWidth: 2,
+              borderRadius: 0
+            }]
+          },
+          options: {
+            indexAxis: `y`,
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            plugins: { legend: { display: false } },
+            scales: {
+              x: {
+                min: 0,
+                max: 100,
+                grid: { color: colGrid },
+                ticks: { color: colBlack, font: { weight: `700` } }
+              },
+              y: {
+                grid: { display: false },
+                ticks: { color: colBlack, font: { weight: `700` } }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function renderOperatorView() {
+      const lockBox = document.getElementById(`operator-lock-box`);
+      const consoleBox = document.getElementById(`operator-console-box`);
+      if (!lockBox || !consoleBox) return;
+
+      if (!localSession.operatorUnlocked) {
+        lockBox.classList.remove(`is-hidden`);
+        consoleBox.classList.add(`is-hidden`);
+        return;
+      }
+
+      lockBox.classList.add(`is-hidden`);
+      consoleBox.classList.remove(`is-hidden`);
+
+      // Populate student monitor table
+      const tbody = document.getElementById(`operator-student-tbody`);
+      if (tbody) {
+        tbody.innerHTML = STUDENT_NAMES.map(function (name, idx) {
+          const st = appState.students[name];
+          let ans = 0;
+          let cor = 0;
+          QUESTIONS.forEach(function (q) {
+            if (st.answers[q.id] !== undefined) {
+              ans += 1;
+              if (st.answers[q.id] === q.correctIndex) cor += 1;
+            }
+          });
+          const net = (cor * 10) - (st.violations * 5);
+          const sqText = st.squadId ? getSquadById(st.squadId).name : `Belum Masuk`;
+          return `
+            <tr>
+              <td class="tabular">${idx + 1}</td>
+              <td><strong>${escapeHtml(name)}</strong></td>
+              <td>${escapeHtml(sqText)}</td>
+              <td class="num">${ans} / ${QUESTIONS.length}</td>
+              <td class="num">${cor}</td>
+              <td class="num">${st.violations > 0 ? `<span class="badge badge--err">${st.violations}x</span>` : `0`}</td>
+              <td class="num"><strong>${net}</strong></td>
+              <td><button type="button" class="btn" style="min-height: 36px; padding: 4px 10px;" onclick="resetStudentEntry('${escapeAttr(name)}')">Reset</button></td>
+            </tr>
+          `;
+        }).join(``);
+      }
+
+      // Populate full solutions (only rendered when unlocked!)
+      const solList = document.getElementById(`operator-solutions-list`);
+      if (solList) {
+        const letters = [`A`, `B`, `C`, `D`];
+        solList.innerHTML = QUESTIONS.map(function (q) {
+          return `
+            <article class="concept-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); flex-wrap: wrap;">
+                <span class="badge badge--blue">Soal #${q.id} &middot; ${escapeHtml(q.topic)}</span>
+                <span class="badge badge--ok">Kunci: ${letters[q.correctIndex]} (${escapeHtml(q.options[q.correctIndex])})</span>
+              </div>
+              <p style="margin: 0; font-weight: 700;">${escapeHtml(q.text)}</p>
+              <div class="formula-box" style="font-size: 0.98rem; font-weight: 500;">
+                <strong>Pembahasan:</strong> ${escapeHtml(q.explanation)}
+              </div>
+            </article>
+          `;
+        }).join(``);
+      }
+    }
+
+    // =========================================================================
+    // 9. UTILITIES & INITIALIZATION
+    // =========================================================================
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, `&amp;`)
+        .replace(/</g, `&lt;`)
+        .replace(/>/g, `&gt;`)
+        .replace(/"/g, `&quot;`)
+        .replace(/'/g, `&#39;`);
+    }
+    function escapeAttr(str) {
+      return String(str).replace(/\\/g, `\\\\`).replace(/'/g, `\\'`);
+    }
+
+    async function initApp() {
+      initSyncChannel();
+      if (window.notebookAppApi && typeof window.notebookAppApi.getAppState === `function`) {
+        try {
+          const saved = await window.notebookAppApi.getAppState();
+          if (saved && saved.sharedRoom) {
+            appState = normalizeState(saved.sharedRoom);
+          }
+          if (saved && saved.lastLocalStudent && appState.students[saved.lastLocalStudent]) {
+            localSession.currentStudentName = saved.lastLocalStudent;
+          }
+        } catch (err) {}
+      }
+      renderAll();
+      if (window.notebookAppApi && typeof window.notebookAppApi.notifyAppReady === `function`) {
+        window.notebookAppApi.notifyAppReady();
+      }
+    }
+
+    window.addEventListener(`DOMContentLoaded`, initApp);
+  </script>
+</body>
+</html>
